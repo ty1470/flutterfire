@@ -6,6 +6,7 @@ library firebase_crashlytics;
 
 import 'package:flutter/foundation.dart'
     show kDebugMode, FlutterErrorDetails, FlutterError, DiagnosticsNode;
+import 'package:stack_trace/stack_trace.dart';
 
 import 'package:firebase_crashlytics_platform_interface/firebase_crashlytics_platform_interface.dart';
 import 'package:firebase_core/firebase_core.dart';

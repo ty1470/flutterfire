@@ -243,9 +243,8 @@ void main() {
 
     test('throws if .updatePhoneNumber', () async {
       PhoneAuthCredential phoneCredential = PhoneAuthProvider.credential(
-        verificationId: 'verificationId',
-        smsCode: '12345',
-      );
+          verificationId: 'verificationId',
+          smsCode: '12345') as PhoneAuthCredential;
       try {
         await userPlatform.updatePhoneNumber(phoneCredential);
       } on UnimplementedError catch (e) {

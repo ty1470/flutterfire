@@ -4,15 +4,15 @@
 
 import 'dart:async';
 
+import '../../firebase_auth_platform_interface.dart';
+import '../firebase_auth_exception.dart';
+import 'method_channel_user.dart';
+import '../platform_interface/platform_interface_user_credential.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../firebase_auth_platform_interface.dart';
-import '../firebase_auth_exception.dart';
-import '../platform_interface/platform_interface_user_credential.dart';
-import 'method_channel_user.dart';
 import 'method_channel_user_credential.dart';
 import 'utils/exception.dart';
 
@@ -279,26 +279,16 @@ class MethodChannelFirebaseAuth extends FirebaseAuthPlatform {
   }
 
   @override
-  Stream<UserPlatform?> authStateChanges() async* {
-    yield currentUser;
-    yield* _authStateChangesListeners[app.name]!
-        .stream
-        .map((event) => event.value);
-  }
+  Stream<UserPlatform?> authStateChanges() =>
+      _authStateChangesListeners[app.name]!.stream.map((event) => event.value);
 
   @override
-  Stream<UserPlatform?> idTokenChanges() async* {
-    yield currentUser;
-    yield* _idTokenChangesListeners[app.name]!
-        .stream
-        .map((event) => event.value);
-  }
+  Stream<UserPlatform?> idTokenChanges() =>
+      _idTokenChangesListeners[app.name]!.stream.map((event) => event.value);
 
   @override
-  Stream<UserPlatform?> userChanges() async* {
-    yield currentUser;
-    yield* _userChangesListeners[app.name]!.stream.map((event) => event.value);
-  }
+  Stream<UserPlatform?> userChanges() =>
+      _userChangesListeners[app.name]!.stream.map((event) => event.value);
 
   @override
   Future<void> sendPasswordResetEmail(
@@ -556,7 +546,8 @@ class MethodChannelFirebaseAuth extends FirebaseAuthPlatform {
           final String? smsCode = arguments['smsCode'];
 
           PhoneAuthCredential phoneAuthCredential =
-              PhoneAuthProvider.credentialFromToken(token, smsCode: smsCode);
+              PhoneAuthProvider.credentialFromToken(token, smsCode: smsCode)
+                  as PhoneAuthCredential;
           verificationCompleted(phoneAuthCredential);
         } else if (name == 'Auth#phoneVerificationFailed') {
           final Map<dynamic, dynamic>? error = arguments['error'];

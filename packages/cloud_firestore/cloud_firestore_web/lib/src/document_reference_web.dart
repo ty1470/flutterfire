@@ -3,8 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:cloud_firestore_platform_interface/cloud_firestore_platform_interface.dart';
-
-import 'internals.dart';
+import 'utils/exception.dart';
 import 'utils/web_utils.dart';
 import 'utils/codec_utility.dart';
 import 'interop/firestore.dart' as firestore_interop;
@@ -27,33 +26,45 @@ class DocumentReferenceWeb extends DocumentReferencePlatform {
         super(firestore, path);
 
   @override
-  Future<void> set(Map<String, dynamic> data, [SetOptions? options]) {
-    return guard(
-      () => _delegate.set(
+  Future<void> set(Map<String, dynamic> data, [SetOptions? options]) async {
+    try {
+      await _delegate.set(
         CodecUtility.encodeMapData(data)!,
         convertSetOptions(options),
-      ),
-    );
+      );
+    } catch (e) {
+      throw getFirebaseException(e);
+    }
   }
 
   @override
-  Future<void> update(Map<String, dynamic> data) {
-    return guard(() => _delegate.update(CodecUtility.encodeMapData(data)!));
+  Future<void> update(Map<String, dynamic> data) async {
+    try {
+      await _delegate.update(CodecUtility.encodeMapData(data)!);
+    } catch (e) {
+      throw getFirebaseException(e);
+    }
   }
 
   @override
   Future<DocumentSnapshotPlatform> get(
       [GetOptions options = const GetOptions()]) async {
-    firestore_interop.DocumentSnapshot documentSnapshot = await guard(
-      () => _delegate.get(convertGetOptions(options)),
-    );
-
-    return convertWebDocumentSnapshot(firestore, documentSnapshot);
+    try {
+      firestore_interop.DocumentSnapshot documentSnapshot =
+          await _delegate.get(convertGetOptions(options));
+      return convertWebDocumentSnapshot(firestore, documentSnapshot);
+    } catch (e) {
+      throw getFirebaseException(e);
+    }
   }
 
   @override
-  Future<void> delete() {
-    return guard(_delegate.delete);
+  Future<void> delete() async {
+    try {
+      await _delegate.delete();
+    } catch (e) {
+      throw getFirebaseException(e);
+    }
   }
 
   @override
@@ -65,11 +76,11 @@ class DocumentReferenceWeb extends DocumentReferencePlatform {
     if (includeMetadataChanges) {
       querySnapshots = _delegate.onMetadataChangesSnapshot;
     }
-
-    return guard(
-      () => querySnapshots.map((webSnapshot) {
-        return convertWebDocumentSnapshot(firestore, webSnapshot);
-      }),
-    );
+    return querySnapshots
+        .map(
+            (webSnapshot) => convertWebDocumentSnapshot(firestore, webSnapshot))
+        .handleError((e) {
+      throw getFirebaseException(e);
+    });
   }
 }

@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// @dart=2.9
+
 part of firebase_database;
 
 enum _EventType {
@@ -15,46 +17,26 @@ enum _EventType {
 /// `Event` encapsulates a DataSnapshot and possibly also the key of its
 /// previous sibling, which can be used to order the snapshots.
 class Event {
-  Event._(Map<Object?, Object?> _data)
-      : previousSiblingKey = _data['previousSiblingKey'] as String?,
-        snapshot = DataSnapshot._fromJson(
-            _data['snapshot']! as Map<Object?, Object?>,
-            _data['childKeys'] as List<Object?>?);
+  Event._(this._data) : snapshot = DataSnapshot._(_data['snapshot']);
 
   final DataSnapshot snapshot;
+  Map<dynamic, dynamic> _data;
 
-  final String? previousSiblingKey;
+  String get previousSiblingKey => _data['previousSiblingKey'];
 }
 
 /// A DataSnapshot contains data from a Firebase Database location.
 /// Any time you read Firebase data, you receive the data as a DataSnapshot.
 class DataSnapshot {
-  DataSnapshot._(this.key, this.value);
+  DataSnapshot._(this._data);
 
-  factory DataSnapshot._fromJson(
-    Map<Object?, Object?> _data,
-    List<Object?>? childKeys,
-  ) {
-    Object? dataValue = _data['value'];
-    Object? value;
-
-    if (dataValue is Map<Object?, Object?>) {
-      value = {for (final key in childKeys!) key: dataValue[key]};
-    } else if (dataValue is List<Object?>) {
-      value = childKeys!
-          .map((key) => dataValue[int.parse(key! as String)])
-          .toList();
-    } else {
-      value = dataValue;
-    }
-    return DataSnapshot._(_data['key'] as String?, value);
-  }
+  final Map<dynamic, dynamic> _data;
 
   /// The key of the location that generated this DataSnapshot.
-  final String? key;
+  String get key => _data['key'];
 
   /// Returns the contents of this data snapshot as native types.
-  final dynamic value;
+  dynamic get value => _data['value'];
 }
 
 class MutableData {

@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// @dart=2.9
+
 part of firebase_performance;
 
 /// Valid HttpMethods for manual network APIs.
@@ -15,7 +17,7 @@ class FirebasePerformance {
   FirebasePerformance._(this._handle) {
     channel.invokeMethod<bool>(
       'FirebasePerformance#instance',
-      <String, Object?>{'handle': _handle},
+      <String, dynamic>{'handle': _handle},
     );
   }
 
@@ -36,12 +38,11 @@ class FirebasePerformance {
   /// True if performance monitoring is enabled and false if performance
   /// monitoring is disabled. This is for dynamic enable/disable state. This
   /// does not reflect whether instrumentation is enabled/disabled.
-  Future<bool> isPerformanceCollectionEnabled() async {
-    final isPerformanceCollectionEnabled = await channel.invokeMethod<bool>(
+  Future<bool> isPerformanceCollectionEnabled() {
+    return channel.invokeMethod<bool>(
       'FirebasePerformance#isPerformanceCollectionEnabled',
-      <String, Object?>{'handle': _handle},
+      <String, dynamic>{'handle': _handle},
     );
-    return isPerformanceCollectionEnabled!;
   }
 
   /// Enables or disables performance monitoring.
@@ -51,7 +52,7 @@ class FirebasePerformance {
   Future<void> setPerformanceCollectionEnabled(bool enable) {
     return channel.invokeMethod<void>(
       'FirebasePerformance#setPerformanceCollectionEnabled',
-      <String, Object?>{'handle': _handle, 'enable': enable},
+      <String, dynamic>{'handle': _handle, 'enable': enable},
     );
   }
 
@@ -65,7 +66,7 @@ class FirebasePerformance {
 
     FirebasePerformance.channel.invokeMethod<void>(
       'FirebasePerformance#newTrace',
-      <String, Object?>{'handle': _handle, 'traceHandle': handle, 'name': name},
+      <String, dynamic>{'handle': _handle, 'traceHandle': handle, 'name': name},
     );
 
     return Trace._(handle, name);
@@ -77,7 +78,7 @@ class FirebasePerformance {
 
     FirebasePerformance.channel.invokeMethod<void>(
       'FirebasePerformance#newHttpMetric',
-      <String, Object?>{
+      <String, dynamic>{
         'handle': _handle,
         'httpMetricHandle': handle,
         'url': url,

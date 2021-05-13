@@ -1,15 +1,3 @@
-## 8.0.4
-
- - Update a dependency to the latest release.
-
-## 8.0.3
-
- - **FIX**: improve refFromURL http regex (#5682).
-
-## 8.0.2
-
- - Update a dependency to the latest release.
-
 ## 8.0.1
 
  - **DOCS**: remove incorrect ARCHS in ios examples (#5450).

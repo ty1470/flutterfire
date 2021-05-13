@@ -1,11 +1,3 @@
-## 4.0.4
-
- - Update a dependency to the latest release.
-
-## 4.0.3
-
- - Update a dependency to the latest release.
-
 ## 4.0.2
 
  - Update a dependency to the latest release.

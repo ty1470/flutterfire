@@ -1,14 +1,15 @@
+// @dart=2.9
+
 import 'package:flutter_test/flutter_test.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:integration_test/integration_test.dart';
+import 'package:e2e/e2e.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 
 void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  E2EWidgetsFlutterBinding.ensureInitialized();
 
   group('$RemoteConfig', () {
-    late RemoteConfig remoteConfig;
+    RemoteConfig remoteConfig;
 
     setUp(() async {
       await Firebase.initializeApp();

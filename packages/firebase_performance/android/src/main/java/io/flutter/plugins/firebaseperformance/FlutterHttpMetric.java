@@ -77,7 +77,7 @@ class FlutterHttpMetric implements MethodChannel.MethodCallHandler {
   @SuppressWarnings("ConstantConditions")
   private void setRequestPayloadSize(MethodCall call, MethodChannel.Result result) {
     final Number payloadSize = call.argument("requestPayloadSize");
-    httpMetric.setRequestPayloadSize(payloadSize != null ? payloadSize.longValue() : null);
+    httpMetric.setRequestPayloadSize(payloadSize.longValue());
     result.success(null);
   }
 
@@ -90,7 +90,7 @@ class FlutterHttpMetric implements MethodChannel.MethodCallHandler {
   @SuppressWarnings("ConstantConditions")
   private void setResponsePayloadSize(MethodCall call, MethodChannel.Result result) {
     final Number payloadSize = call.argument("responsePayloadSize");
-    httpMetric.setResponsePayloadSize(payloadSize != null ? payloadSize.longValue() : null);
+    httpMetric.setResponsePayloadSize(payloadSize.longValue());
     result.success(null);
   }
 

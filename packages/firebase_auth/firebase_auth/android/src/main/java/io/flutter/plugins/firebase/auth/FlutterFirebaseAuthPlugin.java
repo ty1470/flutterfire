@@ -116,9 +116,16 @@ public class FlutterFirebaseAuthPlugin
   public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
     channel.setMethodCallHandler(null);
     channel = null;
+
+    for (EventChannel eventChannel : streamHandlers.keySet()) {
+      StreamHandler streamHandler = streamHandlers.get(eventChannel);
+      streamHandler.onCancel(null);
+      eventChannel.setStreamHandler(null);
+    }
+
     messenger = null;
 
-    removeEventListeners();
+    streamHandlers.clear();
   }
 
   @Override
@@ -1209,18 +1216,10 @@ public class FlutterFirebaseAuthPlugin
     return Tasks.call(
         cachedThreadPool,
         () -> {
-          removeEventListeners();
+          // TODO: not sure if this is applicable here.
+          //          removeEventListeners();
           authCredentials.clear();
           return null;
         });
-  }
-
-  private void removeEventListeners() {
-    for (EventChannel eventChannel : streamHandlers.keySet()) {
-      StreamHandler streamHandler = streamHandlers.get(eventChannel);
-      streamHandler.onCancel(null);
-      eventChannel.setStreamHandler(null);
-    }
-    streamHandlers.clear();
   }
 }

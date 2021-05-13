@@ -601,10 +601,9 @@ void main() {
     });
 
     group('updatePhoneNumber()', () {
-      PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
-        verificationId: 'test',
-        smsCode: 'test',
-      );
+      PhoneAuthCredential phoneAuthCredential =
+          PhoneAuthProvider.credential(verificationId: 'test', smsCode: 'test')
+              as PhoneAuthCredential;
 
       test('gets result successfully', () async {
         await auth.currentUser!.updatePhoneNumber(phoneAuthCredential);

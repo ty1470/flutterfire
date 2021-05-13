@@ -154,20 +154,6 @@ id roundDoubles(id value) {
   }
 }
 
-+ (NSMutableArray *)getSnapshotChildKeys:(FIRDataSnapshot *)dataSnapshot {
-  NSMutableArray *childKeys = [NSMutableArray array];
-  if (dataSnapshot.childrenCount > 0) {
-    NSEnumerator *children = [dataSnapshot children];
-    FIRDataSnapshot *child;
-    child = [children nextObject];
-    while (child) {
-      [childKeys addObject:child.key];
-      child = [children nextObject];
-    }
-  }
-  return childKeys;
-}
-
 - (instancetype)init {
   self = [super init];
   if (self) {
@@ -320,17 +306,15 @@ id roundDoubles(id value) {
     __block FIRDatabaseHandle handle = [getDatabaseQuery(database, call.arguments)
         observeEventType:eventType
         andPreviousSiblingKeyWithBlock:^(FIRDataSnapshot *snapshot, NSString *previousSiblingKey) {
-          [self.channel
-              invokeMethod:@"Event"
-                 arguments:@{
-                   @"handle" : [NSNumber numberWithUnsignedInteger:handle],
-                   @"snapshot" : @{
-                     @"key" : snapshot.key ?: [NSNull null],
-                     @"value" : roundDoubles(snapshot.value) ?: [NSNull null],
-                   },
-                   @"previousSiblingKey" : previousSiblingKey ?: [NSNull null],
-                   @"childKeys" : [FLTFirebaseDatabasePlugin getSnapshotChildKeys:snapshot]
-                 }];
+          [self.channel invokeMethod:@"Event"
+                           arguments:@{
+                             @"handle" : [NSNumber numberWithUnsignedInteger:handle],
+                             @"snapshot" : @{
+                               @"key" : snapshot.key ?: [NSNull null],
+                               @"value" : roundDoubles(snapshot.value) ?: [NSNull null],
+                             },
+                             @"previousSiblingKey" : previousSiblingKey ?: [NSNull null],
+                           }];
         }
         withCancelBlock:^(NSError *error) {
           [self.channel invokeMethod:@"Error"

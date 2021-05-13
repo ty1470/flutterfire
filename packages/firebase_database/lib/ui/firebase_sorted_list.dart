@@ -2,7 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// @dart=2.9
+
 import 'dart:collection';
+
+import 'package:flutter/foundation.dart';
 
 import '../firebase_database.dart'
     show DatabaseError, DataSnapshot, Event, Query;
@@ -21,26 +25,19 @@ class FirebaseSortedList extends ListBase<DataSnapshot>
         // ignore: prefer_mixin
         StreamSubscriberMixin<Event> {
   FirebaseSortedList({
-    required this.query,
-    required this.comparator,
+    @required this.query,
+    @required this.comparator,
     this.onChildAdded,
     this.onChildRemoved,
     this.onChildChanged,
     this.onValue,
     this.onError,
-  }) {
-    if (onChildAdded != null) {
-      listen(query.onChildAdded, _onChildAdded, onError: _onError);
-    }
-    if (onChildRemoved != null) {
-      listen(query.onChildRemoved, _onChildRemoved, onError: _onError);
-    }
-    if (onChildChanged != null) {
-      listen(query.onChildChanged, _onChildChanged, onError: _onError);
-    }
-    if (onValue != null) {
-      listen(query.onValue, _onValue, onError: _onError);
-    }
+  })  : assert(query != null),
+        assert(comparator != null) {
+    listen(query.onChildAdded, _onChildAdded, onError: _onError);
+    listen(query.onChildRemoved, _onChildRemoved, onError: _onError);
+    listen(query.onChildChanged, _onChildChanged, onError: _onError);
+    listen(query.onValue, _onValue, onError: _onError);
   }
 
   /// Database query used to populate the list
@@ -50,19 +47,19 @@ class FirebaseSortedList extends ListBase<DataSnapshot>
   final Comparator<DataSnapshot> comparator;
 
   /// Called when the child has been added
-  final ChildCallback? onChildAdded;
+  final ChildCallback onChildAdded;
 
   /// Called when the child has been removed
-  final ChildCallback? onChildRemoved;
+  final ChildCallback onChildRemoved;
 
   /// Called when the child has changed
-  final ChildCallback? onChildChanged;
+  final ChildCallback onChildChanged;
 
   /// Called when the data of the list has finished loading
-  final ValueCallback? onValue;
+  final ValueCallback onValue;
 
   /// Called when an error is reported (e.g. permission denied)
-  final ErrorCallback? onError;
+  final ErrorCallback onError;
 
   // ListBase implementation
   final List<DataSnapshot> _snapshots = <DataSnapshot>[];
@@ -93,7 +90,7 @@ class FirebaseSortedList extends ListBase<DataSnapshot>
   void _onChildAdded(Event event) {
     _snapshots.add(event.snapshot);
     _snapshots.sort(comparator);
-    onChildAdded!(_snapshots.indexOf(event.snapshot), event.snapshot);
+    onChildAdded(_snapshots.indexOf(event.snapshot), event.snapshot);
   }
 
   void _onChildRemoved(Event event) {
@@ -103,7 +100,7 @@ class FirebaseSortedList extends ListBase<DataSnapshot>
     });
     final int index = _snapshots.indexOf(snapshot);
     _snapshots.removeAt(index);
-    onChildRemoved!(index, snapshot);
+    onChildRemoved(index, snapshot);
   }
 
   void _onChildChanged(Event event) {
@@ -113,15 +110,15 @@ class FirebaseSortedList extends ListBase<DataSnapshot>
     });
     final int index = _snapshots.indexOf(snapshot);
     _snapshots[index] = event.snapshot;
-    onChildChanged!(index, event.snapshot);
+    onChildChanged(index, event.snapshot);
   }
 
   void _onValue(Event event) {
-    onValue!(event.snapshot);
+    onValue(event.snapshot);
   }
 
   void _onError(Object o) {
-    final DatabaseError error = o as DatabaseError;
+    final DatabaseError error = o;
     onError?.call(error);
   }
 }
