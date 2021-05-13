@@ -6,14 +6,14 @@ import 'package:firebase_auth_platform_interface/src/auth_credential.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  const String kMockProviderId = 'id-1';
-  const String kMockSignInMethod = 'password';
-  const int kMockToken = 123;
+  final String kMockProviderId = 'id-1';
+  final String kMockSignInMethod = 'password';
+  final int kMockToken = 123;
   group('$AuthCredential', () {
-    late AuthCredential authCredential;
+    /*late*/ AuthCredential authCredential;
 
     setUpAll(() {
-      authCredential = const AuthCredential(
+      authCredential = AuthCredential(
           providerId: kMockProviderId,
           signInMethod: kMockSignInMethod,
           token: kMockToken);
@@ -21,10 +21,8 @@ void main() {
 
     group('Constructor', () {
       test('creates instance of [AuthCredential] and sets required values', () {
-        const result = AuthCredential(
-          providerId: kMockProviderId,
-          signInMethod: kMockSignInMethod,
-        );
+        final result = AuthCredential(
+            providerId: kMockProviderId, signInMethod: kMockSignInMethod);
 
         expect(result, isA<AuthCredential>());
         expect(result.providerId, kMockProviderId);
@@ -50,10 +48,8 @@ void main() {
     test('toString()', () {
       final result = authCredential.toString();
 
-      expect(
-        result,
-        'AuthCredential(providerId: $kMockProviderId, signInMethod: $kMockSignInMethod, token: $kMockToken)',
-      );
+      expect(result,
+          'AuthCredential(providerId: $kMockProviderId, signInMethod: $kMockSignInMethod, token: $kMockToken)');
     });
   });
 }

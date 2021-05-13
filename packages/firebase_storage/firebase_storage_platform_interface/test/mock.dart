@@ -9,12 +9,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_storage_platform_interface/src/method_channel/method_channel_firebase_storage.dart';
 
 typedef MethodCallCallback = dynamic Function(MethodCall methodCall);
-typedef Callback = Function(MethodCall call);
+typedef Callback(MethodCall call);
 
 int mockHandleId = 0;
 int get nextMockHandleId => mockHandleId++;
 
-void setupFirebaseStorageMocks([Callback? customHandlers]) {
+setupFirebaseStorageMocks([Callback /*?*/ customHandlers]) {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   MethodChannelFirebase.channel.setMockMethodCallHandler((call) async {
@@ -63,8 +63,8 @@ Future<void> testExceptionHandling(String type, Function testMethod) async {
       return;
     }
     fail(
-        'testExceptionHandling: $testMethod threw unexpected FirebaseException');
+        'testExceptionHandling: ${testMethod} threw unexpected FirebaseException');
   } catch (e) {
-    fail('testExceptionHandling: $testMethod threw invalid exception $e');
+    fail('testExceptionHandling: ${testMethod} threw invalid exception ${e}');
   }
 }

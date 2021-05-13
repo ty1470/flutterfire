@@ -1,9 +1,8 @@
 name: firebase_remote_config_example
 description: Demonstrates how to use the firebase_remote_config plugin.
 
-environment:
-  sdk: ">=2.12.0 <3.0.0"
-  flutter: ">=1.12.13+hotfix.5"
+flutter:
+  uses-material-design: true
 
 dependencies:
   flutter:
@@ -19,10 +18,6 @@ dependencies:
 dependency_overrides:
   firebase_core:
     path: ../../../firebase_core/firebase_core
-  firebase_core_web:
-    path: ../../../firebase_core/firebase_core_web
-  firebase_core_platform_interface:
-    path: ../../../firebase_core/firebase_core_platform_interface
   firebase_remote_config_platform_interface:
     path: ../../firebase_remote_config_platform_interface
 
@@ -35,5 +30,7 @@ dev_dependencies:
   test: any
   e2e: ^0.6.1
 
-flutter:
-  uses-material-design: true
+environment:
+  sdk: ">=2.0.0 <3.0.0"
+  flutter: ">=1.12.13+hotfix.5 <2.0.0"
+

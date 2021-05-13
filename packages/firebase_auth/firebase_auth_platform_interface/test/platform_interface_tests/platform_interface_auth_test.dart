@@ -8,15 +8,14 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import '../mock.dart';
-import '../providers_tests/email_auth_test.dart';
 
 void main() {
   setupFirebaseAuthMocks();
 
-  late TestFirebaseAuthPlatform firebaseAuthPlatform;
+  /*late*/ TestFirebaseAuthPlatform firebaseAuthPlatform;
 
-  late FirebaseApp app;
-  late FirebaseApp secondaryApp;
+  /*late*/ FirebaseApp app;
+  /*late*/ FirebaseApp secondaryApp;
   group('$FirebaseAuthPlatform()', () {
     setUpAll(() async {
       app = await Firebase.initializeApp();
@@ -36,11 +35,11 @@ void main() {
       handleMethodCall((call) async {
         switch (call.method) {
           case 'Auth#registerIdTokenListener':
-            const String name = 'idTokenChannel';
+            final String name = 'idTokenChannel';
             handleEventChannel(name);
             return name;
           case 'Auth#registerAuthStateListener':
-            const String name = 'authStateChannel';
+            final String name = 'authStateChannel';
             handleEventChannel(name);
             return name;
           default:
@@ -63,7 +62,7 @@ void main() {
           });
       expect(result, isA<FirebaseAuthPlatform>());
       expect(result.currentUser, isA<UserPlatform>());
-      expect(result.currentUser!.uid, '1234');
+      expect(result.currentUser.uid, '1234');
       expect(result.languageCode, equals('en'));
     });
 
@@ -80,35 +79,44 @@ void main() {
         expect(FirebaseAuthPlatform.instance, isA<FirebaseAuthPlatform>());
         expect(FirebaseAuthPlatform.instance.app.name, equals('testApp2'));
       });
+
+      test('throws an [AssertionError] if instance is null', () {
+        expect(
+            () => FirebaseAuthPlatform.instance = null, throwsAssertionError);
+      });
     });
 
     test('throws if .delegateFor', () {
-      expect(
-        () => firebaseAuthPlatform.testDelegateFor(app: Firebase.app()),
-        throwsUnimplementedError,
-      );
+      try {
+        firebaseAuthPlatform.testDelegateFor();
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('delegateFor() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if .setInitialValues', () {
-      expect(
-        () => firebaseAuthPlatform.testSetInitialValues(),
-        throwsUnimplementedError,
-      );
+      try {
+        firebaseAuthPlatform.testSetInitialValues();
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('setInitialValues() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if get.currentUser', () {
-      expect(
-        () => firebaseAuthPlatform.currentUser,
-        throwsUnimplementedError,
-      );
+      try {
+        firebaseAuthPlatform.currentUser;
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('get.currentUser is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if set.currentUser', () {
-      expect(
-        () => firebaseAuthPlatform.sendAuthChangesEvent(
-            defaultFirebaseAppName, null),
-        throwsUnimplementedError,
-      );
       try {
         firebaseAuthPlatform.currentUser = null;
       } on UnimplementedError catch (e) {
@@ -119,65 +127,86 @@ void main() {
     });
 
     test('throws if languageCode', () {
-      expect(
-        () => firebaseAuthPlatform.languageCode,
-        throwsUnimplementedError,
-      );
+      try {
+        firebaseAuthPlatform.languageCode;
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('languageCode is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if sendAuthChangesEvent()', () {
-      expect(
-        () => firebaseAuthPlatform.sendAuthChangesEvent(
-          defaultFirebaseAppName,
-          null,
-        ),
-        throwsUnimplementedError,
-      );
+      try {
+        firebaseAuthPlatform.sendAuthChangesEvent(defaultFirebaseAppName, null);
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('sendAuthChangesEvent() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if applyActionCode()', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.applyActionCode('test'),
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.applyActionCode('test');
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('applyActionCode() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if checkActionCode()', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.checkActionCode('test'),
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.checkActionCode('test');
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('checkActionCode() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if confirmPasswordReset()', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.confirmPasswordReset('test', 'new-password'),
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.confirmPasswordReset('test', 'new-password');
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('confirmPasswordReset() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if createUserWithEmailAndPassword()', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.createUserWithEmailAndPassword(
-          'test@email.com',
-          'password',
-        ),
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.createUserWithEmailAndPassword(
+            'test@email.com', 'password');
+      } on UnimplementedError catch (e) {
+        expect(e.message,
+            equals('createUserWithEmailAndPassword() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if fetchSignInMethodsForEmail()', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.fetchSignInMethodsForEmail('test@email.com'),
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.fetchSignInMethodsForEmail('test@email.com');
+      } on UnimplementedError catch (e) {
+        expect(e.message,
+            equals('fetchSignInMethodsForEmail() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if getRedirectResult()', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.getRedirectResult(),
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.getRedirectResult();
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('getRedirectResult() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     group('isSignInWithEmailLink()', () {
@@ -188,7 +217,7 @@ void main() {
         String code1 = 'oobCode=';
         String code2 = 'oobCode%3D';
         List options = [
-          {'email': testEmail, 'expected': false},
+          {'email': '$testEmail', 'expected': false},
           {'email': '$testEmail$mode1', 'expected': false},
           {'email': '$testEmail$mode2', 'expected': false},
           {'email': '$testEmail$mode1&$mode2', 'expected': false},
@@ -201,183 +230,219 @@ void main() {
           {'email': '$testEmail$mode2&$code2', 'expected': true},
         ];
 
-        for (final element in options) {
-          expect(
-            firebaseAuthPlatform.isSignInWithEmailLink(element['email']),
-            equals(element['expected']),
-          );
-        }
+        options.forEach((element) {
+          expect(firebaseAuthPlatform.isSignInWithEmailLink(element['email']),
+              equals(element['expected']));
+        });
+      });
+      test('throws a assertion error when email is null', () {
+        expect(() => firebaseAuthPlatform.isSignInWithEmailLink(null),
+            throwsAssertionError);
       });
     });
 
     test('throws if authStateChanges()', () {
-      expect(
-        () => firebaseAuthPlatform.authStateChanges(),
-        throwsUnimplementedError,
-      );
+      try {
+        firebaseAuthPlatform.authStateChanges();
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('authStateChanges() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if idTokenChanges()', () {
-      expect(
-        () => firebaseAuthPlatform.idTokenChanges(),
-        throwsUnimplementedError,
-      );
+      try {
+        firebaseAuthPlatform.idTokenChanges();
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('idTokenChanges() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if userChanges()', () {
-      expect(
-        () => firebaseAuthPlatform.sendPasswordResetEmail('test@email.com'),
-        throwsUnimplementedError,
-      );
+      try {
+        firebaseAuthPlatform.userChanges();
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('userChanges() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if sendPasswordResetEmail()', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.sendPasswordResetEmail('test@email.com'),
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.sendPasswordResetEmail('test@email.com');
+      } on UnimplementedError catch (e) {
+        expect(
+            e.message, equals('sendPasswordResetEmail() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if sendSignInLinkToEmail()', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.sendSignInLinkToEmail(
-          'test@email.com',
-          ActionCodeSettings(url: '/'),
-        ),
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.sendSignInLinkToEmail(
+            'test@email.com', null);
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('sendSignInLinkToEmail() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if setLanguageCode()', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.setLanguageCode('en'),
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.setLanguageCode('en');
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('setLanguageCode() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if setSettings()', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.setSettings(),
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.setSettings();
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('setSettings() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if setPersistence()', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.setPersistence(Persistence.LOCAL),
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.setPersistence(Persistence.LOCAL);
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('setPersistence() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if signInAnonymously()', () async {
-      await expectLater(
-        firebaseAuthPlatform.signInAnonymously,
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.signInAnonymously();
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('signInAnonymously() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if signInWithCredential()', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.signInWithCredential(
-          const AuthCredential(
-            providerId: 'provider',
-            signInMethod: 'method',
-          ),
-        ),
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.signInWithCredential(null);
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('signInWithCredential() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if signInWithEmailAndPassword()', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.signInWithEmailAndPassword(
-          'test@email.com',
-          'password',
-        ),
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.signInWithEmailAndPassword(
+            'test@email.com', 'password');
+      } on UnimplementedError catch (e) {
+        expect(e.message,
+            equals('signInWithEmailAndPassword() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if signInWithEmailLink()', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.signInWithEmailLink(
-          'test@email.com',
-          'test.com',
-        ),
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.signInWithEmailLink(
+            'test@email.com', 'test.com');
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('signInWithEmailLink() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if signInWithPhoneNumber()', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.signInWithPhoneNumber(
-          TEST_PHONE_NUMBER,
-          FakeRecaptchaVerifierFactoryPlatform(),
-        ),
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.signInWithPhoneNumber(
+            TEST_PHONE_NUMBER, null);
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('signInWithPhoneNumber() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if signInWithPopup()', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.signInWithPopup(TestEmailAuthProvider()),
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.signInWithPopup(null);
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('signInWithPopup() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if signInWithRedirect()', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.signInWithRedirect(TestEmailAuthProvider()),
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.signInWithRedirect(null);
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('signInWithRedirect() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if signOut()', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.signOut(),
-        throwsUnimplementedError,
-      );
-    });
-
-    test('throws if useEmulator', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.useEmulator('http://localhost', 9099),
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.signOut();
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('signOut() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if verifyPasswordResetCode()', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.verifyPasswordResetCode('test'),
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.verifyPasswordResetCode('test');
+      } on UnimplementedError catch (e) {
+        expect(
+            e.message, equals('verifyPasswordResetCode() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
 
     test('throws if verifyPhoneNumber()', () async {
-      await expectLater(
-        () => firebaseAuthPlatform.verifyPhoneNumber(
-          phoneNumber: '',
-          verificationCompleted: (_) {},
-          verificationFailed: (_) {},
-          codeAutoRetrievalTimeout: (_) {},
-          codeSent: (_, __) {},
-        ),
-        throwsUnimplementedError,
-      );
+      try {
+        await firebaseAuthPlatform.verifyPhoneNumber(
+          phoneNumber: null,
+          verificationCompleted: null,
+          verificationFailed: null,
+          codeAutoRetrievalTimeout: null,
+          codeSent: null,
+        );
+      } on UnimplementedError catch (e) {
+        expect(e.message, equals('verifyPhoneNumber() is not implemented'));
+        return;
+      }
+      fail('Should have thrown an [UnimplementedError]');
     });
   });
 }
 
 class TestFirebaseAuthPlatform extends FirebaseAuthPlatform {
   TestFirebaseAuthPlatform(FirebaseApp app) : super(appInstance: app);
-  FirebaseAuthPlatform testDelegateFor({required FirebaseApp app}) {
-    return delegateFor(app: app);
+  FirebaseAuthPlatform testDelegateFor({FirebaseApp app}) {
+    return this.delegateFor();
   }
 
   FirebaseAuthPlatform testSetInitialValues() {
-    return setInitialValues();
+    return this.setInitialValues(currentUser: null, languageCode: null);
   }
 }
-
-class FakeRecaptchaVerifierFactoryPlatform extends Fake
-    implements RecaptchaVerifierFactoryPlatform {}

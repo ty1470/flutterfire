@@ -14,7 +14,7 @@ void main() {
 
   const MethodChannel channel =
       MethodChannel('plugins.flutter.io/firebase_analytics');
-  MethodCall? methodCall;
+  MethodCall methodCall;
 
   setUp(() async {
     channel.setMockMethodCallHandler((MethodCall call) async {
@@ -108,15 +108,15 @@ void main() {
     test('logEvent log events', () async {
       await analytics.logEvent(
         name: 'test-event',
-        parameters: <String, Object>{'a': 'b'},
+        parameters: <String, dynamic>{'a': 'b'},
       );
       expect(
         methodCall,
         isMethodCall(
           'logEvent',
-          arguments: <String, Object>{
+          arguments: <String, dynamic>{
             'name': 'test-event',
-            'parameters': <String, Object>{'a': 'b'},
+            'parameters': <String, dynamic>{'a': 'b'},
           },
         ),
       );

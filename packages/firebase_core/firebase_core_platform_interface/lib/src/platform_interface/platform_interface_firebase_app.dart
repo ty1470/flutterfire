@@ -14,7 +14,7 @@ class FirebaseAppPlatform extends PlatformInterface {
   static final Object _token = Object();
 
   // ignore: public_member_api_docs
-  static void verifyExtends(FirebaseAppPlatform instance) {
+  static verifyExtends(FirebaseAppPlatform instance) {
     PlatformInterface.verifyToken(instance, _token);
   }
 
@@ -30,15 +30,12 @@ class FirebaseAppPlatform extends PlatformInterface {
   /// Returns true if automatic data collection is enabled for this app.
   bool get isAutomaticDataCollectionEnabled {
     throw UnimplementedError(
-      'isAutomaticDataCollectionEnabled has not been implemented.',
-    );
+        'isAutomaticDataCollectionEnabled has not been implemented.');
   }
 
   /// Deletes the current FirebaseApp.
   Future<void> delete() async {
-    throw UnimplementedError(
-      'delete() has not been implemented.',
-    );
+    throw UnimplementedError('delete() has not been implemented.');
   }
 
   /// Sets whether automatic data collection is enabled or disabled for this app.
@@ -47,28 +44,24 @@ class FirebaseAppPlatform extends PlatformInterface {
   /// the [FirebaseAppPlatform.isAutomaticDataCollectionEnabled] property.
   Future<void> setAutomaticDataCollectionEnabled(bool enabled) async {
     throw UnimplementedError(
-      'setAutomaticDataCollectionEnabled() has not been implemented.',
-    );
+        'setAutomaticDataCollectionEnabled() has not been implemented.');
   }
 
   /// Sets whether automatic resource management is enabled or disabled for this app.
   Future<void> setAutomaticResourceManagementEnabled(bool enabled) async {
     throw UnimplementedError(
-      'setAutomaticResourceManagementEnabled() has not been implemented.',
-    );
+        'setAutomaticResourceManagementEnabled() has not been implemented.');
   }
 
   @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
+  bool operator ==(dynamic other) {
     if (identical(this, other)) return true;
     if (other is! FirebaseAppPlatform) return false;
     return other.name == name && other.options == options;
   }
 
   @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => hashValues(name, options);
+  int get hashCode => hash2(name, options);
 
   @override
   String toString() => '$FirebaseAppPlatform($name)';

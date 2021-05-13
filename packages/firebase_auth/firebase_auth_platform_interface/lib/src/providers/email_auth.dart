@@ -4,6 +4,7 @@
 
 import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
 import 'package:firebase_auth_platform_interface/src/auth_provider.dart';
+import 'package:meta/meta.dart';
 
 const _kLinkProviderId = 'emailLink';
 const _kProviderId = 'password';
@@ -34,18 +35,18 @@ abstract class EmailAuthProvider extends AuthProvider {
   }
 
   /// Creates a new [EmailAuthCredential] from a given email and password.
-  static AuthCredential credential({
-    required String email,
-    required String password,
-  }) {
+  static AuthCredential credential(
+      {@required String email, @required String password}) {
+    assert(email != null);
+    assert(password != null);
     return EmailAuthCredential._credential(email, password);
   }
 
   /// Creates a new [EmailAuthCredential] from a given email and email link.
-  static AuthCredential credentialWithLink({
-    required String email,
-    required String emailLink,
-  }) {
+  static AuthCredential credentialWithLink(
+      {@required String email, @required String emailLink}) {
+    assert(email != null);
+    assert(emailLink != null);
     return EmailAuthCredential._credentialWithLink(email, emailLink);
   }
 }
@@ -55,7 +56,7 @@ abstract class EmailAuthProvider extends AuthProvider {
 class EmailAuthCredential extends AuthCredential {
   EmailAuthCredential._(
     String _signInMethod, {
-    required this.email,
+    @required this.email,
     this.password,
     this.emailLink,
   }) : super(providerId: _kProviderId, signInMethod: _signInMethod);
@@ -75,14 +76,14 @@ class EmailAuthCredential extends AuthCredential {
   final String email;
 
   /// The user account password.
-  final String? password;
+  final String password;
 
   /// The sign-in email link.
-  final String? emailLink;
+  final String emailLink;
 
   @override
-  Map<String, String?> asMap() {
-    return <String, String?>{
+  Map<String, String> asMap() {
+    return <String, String>{
       'providerId': providerId,
       'signInMethod': signInMethod,
       'email': email,

@@ -86,6 +86,7 @@ NSString *const kMessagingPresentationOptionsUserDefaults =
       details = @{
         kMessagingArgumentCode : code,
         kMessagingArgumentMessage : message,
+        kMessagingArgumentAdditionalData : @{},
       };
     }
 
@@ -976,6 +977,7 @@ NSString *const kMessagingPresentationOptionsUserDefaults =
     return @{
       kMessagingArgumentCode : code,
       kMessagingArgumentMessage : message,
+      kMessagingArgumentAdditionalData : @{},
     };
   }
 
@@ -1010,6 +1012,7 @@ NSString *const kMessagingPresentationOptionsUserDefaults =
   return @{
     kMessagingArgumentCode : code,
     kMessagingArgumentMessage : message,
+    kMessagingArgumentAdditionalData : @{},
   };
 }
 

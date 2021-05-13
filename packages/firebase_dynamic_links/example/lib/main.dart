@@ -25,13 +25,13 @@ class _MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<_MainScreen> {
-  String? _linkMessage;
+  String _linkMessage;
   bool _isCreatingLink = false;
   String _testString =
-      'To test: long press link and then copy and click from a non-browser '
+      "To test: long press link and then copy and click from a non-browser "
       "app. Make sure this isn't being tested on iOS simulator and iOS xcode "
-      'is properly setup. Look at firebase_dynamic_links/README.md for more '
-      'details.';
+      "is properly setup. Look at firebase_dynamic_links/README.md for more "
+      "details.";
 
   @override
   void initState() {
@@ -39,13 +39,12 @@ class _MainScreenState extends State<_MainScreen> {
     initDynamicLinks();
   }
 
-  Future<void> initDynamicLinks() async {
+  void initDynamicLinks() async {
     FirebaseDynamicLinks.instance.onLink(
-        onSuccess: (PendingDynamicLinkData? dynamicLink) async {
-      final Uri? deepLink = dynamicLink?.link;
+        onSuccess: (PendingDynamicLinkData dynamicLink) async {
+      final Uri deepLink = dynamicLink?.link;
 
       if (deepLink != null) {
-        // ignore: unawaited_futures
         Navigator.pushNamed(context, deepLink.path);
       }
     }, onError: (OnLinkErrorException e) async {
@@ -53,12 +52,11 @@ class _MainScreenState extends State<_MainScreen> {
       print(e.message);
     });
 
-    final PendingDynamicLinkData? data =
+    final PendingDynamicLinkData data =
         await FirebaseDynamicLinks.instance.getInitialLink();
-    final Uri? deepLink = data?.link;
+    final Uri deepLink = data?.link;
 
     if (deepLink != null) {
-      // ignore: unawaited_futures
       Navigator.pushNamed(context, deepLink.path);
     }
   }
@@ -113,13 +111,13 @@ class _MainScreenState extends State<_MainScreen> {
                 ButtonBar(
                   alignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    ElevatedButton(
+                    RaisedButton(
                       onPressed: !_isCreatingLink
                           ? () => _createDynamicLink(false)
                           : null,
                       child: const Text('Get Long Link'),
                     ),
-                    ElevatedButton(
+                    RaisedButton(
                       onPressed: !_isCreatingLink
                           ? () => _createDynamicLink(true)
                           : null,
@@ -128,21 +126,21 @@ class _MainScreenState extends State<_MainScreen> {
                   ],
                 ),
                 InkWell(
-                  onTap: () async {
-                    if (_linkMessage != null) {
-                      await launch(_linkMessage!);
-                    }
-                  },
-                  onLongPress: () {
-                    Clipboard.setData(ClipboardData(text: _linkMessage));
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Copied Link!')),
-                    );
-                  },
                   child: Text(
                     _linkMessage ?? '',
                     style: const TextStyle(color: Colors.blue),
                   ),
+                  onTap: () async {
+                    if (_linkMessage != null) {
+                      await launch(_linkMessage);
+                    }
+                  },
+                  onLongPress: () {
+                    Clipboard.setData(ClipboardData(text: _linkMessage));
+                    Scaffold.of(context).showSnackBar(
+                      const SnackBar(content: Text('Copied Link!')),
+                    );
+                  },
                 ),
                 Text(_linkMessage == null ? '' : _testString)
               ],

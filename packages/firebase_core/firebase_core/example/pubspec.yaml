@@ -1,20 +1,11 @@
 name: firebase_core_example
 description: Demonstrates how to use the firebase_core plugin.
 
-environment:
-  sdk: ">=2.12.0 <3.0.0"
-
 dependencies:
-  firebase_core:
-    path: ../
   flutter:
     sdk: flutter
-
-dependency_overrides:
-  firebase_core_platform_interface:
-    path: ../../firebase_core_platform_interface
-  firebase_core_web:
-    path: ../../firebase_core_web
+  firebase_core:
+    path: ../
 
 dev_dependencies:
   e2e: ^0.6.1
@@ -25,3 +16,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"

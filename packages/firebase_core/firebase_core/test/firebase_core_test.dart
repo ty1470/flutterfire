@@ -12,19 +12,18 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('$FirebaseApp', () {
-    final mock = MockFirebaseCore();
+    /*late*/ MockFirebaseCore mock;
 
     const FirebaseOptions testOptions = FirebaseOptions(
-      apiKey: 'apiKey',
-      appId: 'appId',
-      messagingSenderId: 'messagingSenderId',
-      projectId: 'projectId',
-    );
+        apiKey: 'apiKey',
+        appId: 'appId',
+        messagingSenderId: 'messagingSenderId',
+        projectId: 'projectId');
 
     String testAppName = 'testApp';
 
     setUp(() async {
-      clearInteractions(mock);
+      mock = MockFirebaseCore();
       Firebase.delegatePackingProperty = mock;
 
       final FirebaseAppPlatform platformApp =
@@ -67,48 +66,5 @@ void main() {
 }
 
 class MockFirebaseCore extends Mock
-    with
-        // ignore: prefer_mixin, plugin_platform_interface needs to migrate to use `mixin`
-        MockPlatformInterfaceMixin
-    implements
-        FirebasePlatform {
-  @override
-  FirebaseAppPlatform app([String name = defaultFirebaseAppName]) {
-    return super.noSuchMethod(
-      Invocation.method(#app, [name]),
-      returnValue: FakeFirebaseAppPlatform(),
-      returnValueForMissingStub: FakeFirebaseAppPlatform(),
-    );
-  }
-
-  @override
-  Future<FirebaseAppPlatform> initializeApp({
-    String? name,
-    FirebaseOptions? options,
-  }) {
-    return super.noSuchMethod(
-      Invocation.method(
-        #initializeApp,
-        const [],
-        {
-          #name: name,
-          #options: options,
-        },
-      ),
-      returnValue: Future.value(FakeFirebaseAppPlatform()),
-      returnValueForMissingStub: Future.value(FakeFirebaseAppPlatform()),
-    );
-  }
-
-  @override
-  List<FirebaseAppPlatform> get apps {
-    return super.noSuchMethod(
-      Invocation.getter(#apps),
-      returnValue: <FirebaseAppPlatform>[],
-      returnValueForMissingStub: <FirebaseAppPlatform>[],
-    );
-  }
-}
-
-// ignore: avoid_implementing_value_types
-class FakeFirebaseAppPlatform extends Fake implements FirebaseAppPlatform {}
+    with MockPlatformInterfaceMixin
+    implements FirebasePlatform {}

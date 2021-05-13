@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart=2.9
-
 // ignore_for_file: deprecated_member_use_from_same_package
 
 // These are temporary ignores to allow us to land a new set of linter rules in
@@ -46,7 +44,7 @@ enum MobileAdGender {
 }
 
 /// Signature for a [MobileAd] status change callback.
-typedef MobileAdListener = void Function(MobileAdEvent event);
+typedef void MobileAdListener(MobileAdEvent event);
 
 /// Targeting info per the native AdMob API.
 ///
@@ -111,9 +109,7 @@ enum AnchorType { bottom, top }
 // The types of ad sizes supported for banners. The names of the values are used
 // in MethodChannel calls to iOS and Android, and should not be changed.
 enum AdSizeType {
-  // ignore: constant_identifier_names
   WidthAndHeight,
-  // ignore: constant_identifier_names
   SmartBanner,
 }
 
@@ -195,8 +191,8 @@ abstract class MobileAd {
     @required this.adUnitId,
     MobileAdTargetingInfo targetingInfo,
     this.listener,
-  })  : _targetingInfo = targetingInfo ?? const MobileAdTargetingInfo(),
-        assert(adUnitId != null && adUnitId.isNotEmpty) {
+  }) : _targetingInfo = targetingInfo ?? const MobileAdTargetingInfo() {
+    assert(adUnitId != null && adUnitId.isNotEmpty);
     assert(_allAds[id] == null);
     _allAds[id] = this;
   }
@@ -237,7 +233,7 @@ abstract class MobileAd {
       {double anchorOffset = 0.0,
       double horizontalCenterOffset = 0.0,
       AnchorType anchorType = AnchorType.bottom}) {
-    return _invokeBooleanMethod('showAd', <String, dynamic>{
+    return _invokeBooleanMethod("showAd", <String, dynamic>{
       'id': id,
       'anchorOffset': anchorOffset.toString(),
       'horizontalCenterOffset': horizontalCenterOffset.toString(),
@@ -252,11 +248,11 @@ abstract class MobileAd {
   Future<bool> dispose() {
     assert(_allAds[id] != null);
     _allAds[id] = null;
-    return _invokeBooleanMethod('disposeAd', <String, dynamic>{'id': id});
+    return _invokeBooleanMethod("disposeAd", <String, dynamic>{'id': id});
   }
 
   Future<bool> isLoaded() {
-    return _invokeBooleanMethod('isAdLoaded', <String, dynamic>{
+    return _invokeBooleanMethod("isAdLoaded", <String, dynamic>{
       'id': id,
     });
   }
@@ -291,7 +287,7 @@ class BannerAd extends MobileAd {
 
   @override
   Future<bool> load() {
-    return _invokeBooleanMethod('loadBannerAd', <String, dynamic>{
+    return _invokeBooleanMethod("loadBannerAd", <String, dynamic>{
       'id': id,
       'adUnitId': adUnitId,
       'targetingInfo': targetingInfo?.toJson(),
@@ -347,7 +343,7 @@ class NativeAd extends MobileAd {
 
   @override
   Future<bool> load() {
-    return _invokeBooleanMethod('loadNativeAd', <String, dynamic>{
+    return _invokeBooleanMethod("loadNativeAd", <String, dynamic>{
       'id': id,
       'factoryId': factoryId,
       'targetingInfo': targetingInfo?.toJson(),
@@ -378,7 +374,7 @@ class InterstitialAd extends MobileAd {
 
   @override
   Future<bool> load() {
-    return _invokeBooleanMethod('loadInterstitialAd', <String, dynamic>{
+    return _invokeBooleanMethod("loadInterstitialAd", <String, dynamic>{
       'id': id,
       'adUnitId': adUnitId,
       'targetingInfo': targetingInfo?.toJson(),
@@ -406,11 +402,8 @@ enum RewardedVideoAdEvent {
 /// is sent, when they'll contain the reward amount and reward type that were
 /// configured for the AdMob ad unit when it was created. They will be null for
 /// all other events.
-typedef RewardedVideoAdListener = void Function(
-  RewardedVideoAdEvent event, {
-  String rewardType,
-  int rewardAmount,
-});
+typedef void RewardedVideoAdListener(RewardedVideoAdEvent event,
+    {String rewardType, int rewardAmount});
 
 /// An AdMob rewarded video ad.
 ///
@@ -475,7 +468,7 @@ class RewardedVideoAd {
 
   /// Sets the user id to be used in server-to-server reward callbacks.
   set userId(String userId) {
-    _invokeBooleanMethod('setRewardedVideoAdUserId', <String, dynamic>{
+    _invokeBooleanMethod("setRewardedVideoAdUserId", <String, dynamic>{
       'userId': userId,
     });
     _userId = userId;
@@ -483,7 +476,7 @@ class RewardedVideoAd {
 
   /// Sets custom data to be included in server-to-server reward callbacks.
   set customData(String customData) {
-    _invokeBooleanMethod('setRewardedVideoAdCustomData', <String, dynamic>{
+    _invokeBooleanMethod("setRewardedVideoAdCustomData", <String, dynamic>{
       'customData': customData,
     });
     _customData = customData;
@@ -491,7 +484,7 @@ class RewardedVideoAd {
 
   /// Shows a rewarded video ad if one has been loaded.
   Future<bool> show() {
-    return _invokeBooleanMethod('showRewardedVideoAd');
+    return _invokeBooleanMethod("showRewardedVideoAd");
   }
 
   /// Loads a rewarded video ad using the provided ad unit ID.
@@ -499,7 +492,7 @@ class RewardedVideoAd {
       {@required String adUnitId,
       MobileAdTargetingInfo targetingInfo = const MobileAdTargetingInfo()}) {
     assert(adUnitId.isNotEmpty);
-    return _invokeBooleanMethod('loadRewardedVideoAd', <String, dynamic>{
+    return _invokeBooleanMethod("loadRewardedVideoAd", <String, dynamic>{
       'adUnitId': adUnitId,
       'targetingInfo': targetingInfo?.toJson(),
     });
@@ -578,7 +571,7 @@ class FirebaseAdMob {
       bool analyticsEnabled = false}) {
     assert(appId != null && appId.isNotEmpty);
     assert(analyticsEnabled != null);
-    return _invokeBooleanMethod('initialize', <String, dynamic>{
+    return _invokeBooleanMethod("initialize", <String, dynamic>{
       'appId': appId,
       'trackingId': trackingId,
       'analyticsEnabled': analyticsEnabled,
@@ -611,7 +604,7 @@ class FirebaseAdMob {
       }
     }
 
-    return Future<dynamic>.value();
+    return Future<dynamic>.value(null);
   }
 }
 

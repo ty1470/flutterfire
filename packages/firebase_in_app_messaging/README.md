@@ -54,7 +54,7 @@ import 'package:firebase_in_app_messaging/firebase_in_app_messaging.dart';
 To trigger in-app messages programmatically
 
 ```dart
-FirebaseInAppMessaging.instance.triggerEvent('eventName');
+FirebaseInAppMessaging.triggerEvent('eventName');
 ```
 
 #### Temporarily disable in-app messages ([docs](https://firebase.google.com/docs/in-app-messaging/modify-message-behavior?platform=android#temporarily_disable_in-app_messages))
@@ -62,11 +62,11 @@ FirebaseInAppMessaging.instance.triggerEvent('eventName');
 If you'd like to suppress message displays for any reason, for example to avoid interrupting a sequence of payment processing screens, you can do that the following
 
 ```dart
-FirebaseInAppMessaging.instance.setMessagesSuppressed(true);
+FirebaseInAppMessaging.setMessagesSuppressed(true);
 
 
 // To re-enable
-FirebaseInAppMessaging.instance.setMessagesSuppressed(false);
+FirebaseInAppMessaging.setMessagesSuppressed(false);
 ```
 
 #### Enable opt-out message delivery ([docs](https://firebase.google.com/docs/in-app-messaging/modify-message-behavior?platform=android#enable_opt-out_message_delivery))
@@ -74,7 +74,7 @@ FirebaseInAppMessaging.instance.setMessagesSuppressed(false);
 First, follow the step outlined [here](https://firebase.google.com/docs/in-app-messaging/modify-message-behavior#enable_opt-out_message_delivery) for both iOS and Android. Then add the following code in your app:
 
 ```dart
-FirebaseInAppMessaging.instance.setAutomaticDataCollectionEnabled(false);
+FirebaseInAppMessaging.setAutomaticDataCollectionEnabled(false);
 ```
 
 ## Example

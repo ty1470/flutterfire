@@ -12,10 +12,14 @@ import 'package:meta/meta.dart';
 /// standalone for integration with other 3rd party providers.
 class OAuthProvider extends AuthProvider {
   // ignore: public_member_api_docs
-  OAuthProvider(String providerId) : super(providerId);
+  OAuthProvider(this.providerId)
+      : assert(providerId != null),
+        super(providerId);
+
+  final String providerId;
 
   List<String> _scopes = [];
-  Map<dynamic, dynamic>? _parameters;
+  Map<dynamic, dynamic> _parameters;
 
   /// Returns the currently assigned scopes to this provider instance.
   /// This is a Web only API.
@@ -25,13 +29,14 @@ class OAuthProvider extends AuthProvider {
 
   /// Returns the parameters for this provider instance.
   /// This is a Web only API.
-  Map<dynamic, dynamic>? get parameters {
+  Map<dynamic, dynamic> get parameters {
     return _parameters;
   }
 
   /// Adds OAuth scope.
   /// This is a Web only API.
   OAuthProvider addScope(String scope) {
+    assert(scope != null);
     _scopes.add(scope);
     return this;
   }
@@ -40,18 +45,15 @@ class OAuthProvider extends AuthProvider {
   /// redirect sign-in operations.
   /// This is a Web only API.
   OAuthProvider setCustomParameters(
-    Map<dynamic, dynamic> customOAuthParameters,
-  ) {
+      Map<dynamic, dynamic> customOAuthParameters) {
+    assert(customOAuthParameters != null);
     _parameters = customOAuthParameters;
     return this;
   }
 
   /// Create a new [OAuthCredential] from a provided [accessToken];
-  OAuthCredential credential({
-    String? accessToken,
-    String? idToken,
-    String? rawNonce,
-  }) {
+  OAuthCredential credential(
+      {String accessToken, String idToken, String rawNonce}) {
     return OAuthCredential(
       providerId: providerId,
       signInMethod: 'oauth',
@@ -70,34 +72,36 @@ class OAuthCredential extends AuthCredential {
   // ignore: public_member_api_docs
   @protected
   const OAuthCredential({
-    required String providerId,
-    required String signInMethod,
+    @required String providerId,
+    @required String signInMethod,
     this.accessToken,
     this.idToken,
     this.secret,
     this.rawNonce,
-  }) : super(providerId: providerId, signInMethod: signInMethod);
+  })  : assert(providerId != null),
+        assert(signInMethod != null),
+        super(providerId: providerId, signInMethod: signInMethod);
 
   /// The OAuth access token associated with the credential if it belongs to an
   /// OAuth provider, such as `facebook.com`, `twitter.com`, etc.
-  final String? accessToken;
+  final String accessToken;
 
   /// The OAuth ID token associated with the credential if it belongs to an
   /// OIDC provider, such as `google.com`.
-  final String? idToken;
+  final String idToken;
 
   /// The OAuth access token secret associated with the credential if it belongs
   /// to an OAuth 1.0 provider, such as `twitter.com`.
-  final String? secret;
+  final String secret;
 
   /// The raw nonce associated with the ID token. It is required when an ID
   /// token with a nonce field is provided. The SHA-256 hash of the raw nonce
   /// must match the nonce field in the ID token.
-  final String? rawNonce;
+  final String rawNonce;
 
   @override
-  Map<String, String?> asMap() {
-    return <String, String?>{
+  Map<String, String /*?*/ > asMap() {
+    return <String, String /*?*/ >{
       'providerId': providerId,
       'signInMethod': signInMethod,
       'idToken': idToken,

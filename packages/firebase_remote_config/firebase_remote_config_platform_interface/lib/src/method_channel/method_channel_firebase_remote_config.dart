@@ -1,26 +1,14 @@
-// @dart=2.9
-
 import 'dart:async';
 
+import 'package:firebase_remote_config_platform_interface/firebase_remote_config_platform_interface.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 
-import '../../firebase_remote_config_platform_interface.dart';
 import 'utils/exception.dart';
 
 /// Method Channel delegate for [FirebaseRemoteConfigPlatform].
 class MethodChannelFirebaseRemoteConfig extends FirebaseRemoteConfigPlatform {
-  /// Creates a new instance for a given [FirebaseApp].
-  MethodChannelFirebaseRemoteConfig({@required FirebaseApp app})
-      : super(appInstance: app);
-
-  /// Internal stub class initializer.
-  ///
-  /// When the user code calls a Remote Config method, the real instance
-  /// is initialized via the [delegateFor] method.
-  MethodChannelFirebaseRemoteConfig._() : super(appInstance: null);
-
   /// Keeps an internal handle ID for the channel.
   static int _methodChannelHandleId = 0;
 
@@ -40,6 +28,16 @@ class MethodChannelFirebaseRemoteConfig extends FirebaseRemoteConfigPlatform {
   static MethodChannelFirebaseRemoteConfig get instance {
     return MethodChannelFirebaseRemoteConfig._();
   }
+
+  /// Internal stub class initializer.
+  ///
+  /// When the user code calls a Remote Config method, the real instance
+  /// is initialized via the [delegateFor] method.
+  MethodChannelFirebaseRemoteConfig._() : super(appInstance: null);
+
+  /// Creates a new instance for a given [FirebaseApp].
+  MethodChannelFirebaseRemoteConfig({@required FirebaseApp app})
+      : super(appInstance: app);
 
   Map<String, RemoteConfigValue> _activeParameters;
   RemoteConfigSettings _settings;
@@ -267,8 +265,8 @@ class MethodChannelFirebaseRemoteConfig extends FirebaseRemoteConfigPlatform {
 
   Map<String, RemoteConfigValue> _parseParameters(
       Map<dynamic, dynamic> rawParameters) {
-    var parameters = <String, RemoteConfigValue>{};
-    for (final key in rawParameters.keys) {
+    Map<String, RemoteConfigValue> parameters = Map();
+    for (String key in rawParameters.keys) {
       final rawValue = rawParameters[key];
       parameters[key] = RemoteConfigValue(
           rawValue['value'], _parseValueSource(rawValue['source']));

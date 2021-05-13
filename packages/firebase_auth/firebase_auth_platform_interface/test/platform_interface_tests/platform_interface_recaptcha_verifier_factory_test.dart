@@ -8,7 +8,8 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 void main() {
   group('$RecaptchaVerifierFactoryPlatform()', () {
-    late TestRecaptchaVerifierFactoryPlatform recaptchaVerifierFactoryPlatform;
+    /*late*/ TestRecaptchaVerifierFactoryPlatform
+        recaptchaVerifierFactoryPlatform;
 
     setUpAll(() async {
       recaptchaVerifierFactoryPlatform = TestRecaptchaVerifierFactoryPlatform();
@@ -28,6 +29,11 @@ void main() {
         } catch (_) {
           fail('thrown an unexpected error');
         }
+      });
+
+      test('throws an [AssertionError] exception when instance is null', () {
+        expect(() => RecaptchaVerifierFactoryPlatform.instance = null,
+            throwsAssertionError);
       });
     });
 
@@ -52,6 +58,11 @@ void main() {
           fail('thrown an unexpected exception');
         }
       });
+
+      test('throws an [AssertionError] exception when instance is null', () {
+        expect(() => RecaptchaVerifierFactoryPlatform.verifyExtends(null),
+            throwsAssertionError);
+      });
     });
 
     test('throws if delegate', () async {
@@ -67,7 +78,7 @@ void main() {
     group('delegateFor()', () {
       test('throws UnimplementedError error', () async {
         try {
-          recaptchaVerifierFactoryPlatform.delegateFor();
+          await recaptchaVerifierFactoryPlatform.delegateFor();
         } on UnimplementedError catch (e) {
           expect(e.message, equals('delegateFor() is not implemented'));
           return;
@@ -78,7 +89,7 @@ void main() {
 
     test('throws if type', () async {
       try {
-        recaptchaVerifierFactoryPlatform.type;
+        await recaptchaVerifierFactoryPlatform.type;
       } on UnimplementedError catch (e) {
         expect(e.message, equals('type is not implemented'));
         return;
@@ -88,7 +99,7 @@ void main() {
 
     test('throws if clear()', () async {
       try {
-        recaptchaVerifierFactoryPlatform.clear();
+        await recaptchaVerifierFactoryPlatform.clear();
       } on UnimplementedError catch (e) {
         expect(e.message, equals('clear() is not implemented'));
         return;

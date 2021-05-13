@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart=2.9
-
 part of firebase_ml_vision;
 
 /// Option for controlling additional variables in performing text recognition.
@@ -27,6 +25,10 @@ enum CloudTextModelType { sparse, dense }
 ///     await textRecognizer.processImage(image);
 /// ```
 class TextRecognizer {
+  final ModelType modelType;
+  final CloudTextRecognizerOptions _cloudOptions;
+  final int _handle;
+
   TextRecognizer._({
     CloudTextRecognizerOptions cloudOptions,
     @required this.modelType,
@@ -36,10 +38,6 @@ class TextRecognizer {
         assert(modelType != null),
         assert((modelType == ModelType.cloud && cloudOptions != null) ||
             (modelType == ModelType.onDevice && cloudOptions == null));
-
-  final ModelType modelType;
-  final CloudTextRecognizerOptions _cloudOptions;
-  final int _handle;
 
   bool _hasBeenOpened = false;
   bool _isClosed = false;
@@ -74,7 +72,7 @@ class TextRecognizer {
   /// Releases resources used by this recognizer.
   Future<void> close() {
     if (!_hasBeenOpened) _isClosed = true;
-    if (_isClosed) return Future<void>.value();
+    if (_isClosed) return Future<void>.value(null);
 
     _isClosed = true;
     return FirebaseVision.channel.invokeMethod<void>(
@@ -89,18 +87,6 @@ class TextRecognizer {
 /// Hinted languages and text model type may provide better results if text
 /// language and density are known prior to inference.
 class CloudTextRecognizerOptions {
-  /// Constructor for [CloudTextRecognizerOptions].
-  ///
-  /// For Latin alphabet based languages, setting language hints is not needed.
-  ///
-  /// In cases, when the language of the text in the image is known, setting
-  /// a hint will help get better results (although it will be a significant
-  /// hindrance if the hint is wrong).
-  const CloudTextRecognizerOptions({
-    this.hintedLanguages,
-    this.textModelType = CloudTextModelType.sparse,
-  }) : assert(textModelType != null);
-
   /// Language hints for text recognition.
   ///
   /// In most cases, an empty value yields the best results since it enables
@@ -116,6 +102,17 @@ class CloudTextRecognizerOptions {
   ///
   /// Default setting is 'sparse'.
   final CloudTextModelType textModelType;
+
+  /// Constructor for [CloudTextRecognizerOptions].
+  ///
+  /// For Latin alphabet based languages, setting language hints is not needed.
+  ///
+  /// In cases, when the language of the text in the image is known, setting
+  /// a hint will help get better results (although it will be a significant
+  /// hindrance if the hint is wrong).
+  const CloudTextRecognizerOptions(
+      {this.hintedLanguages, this.textModelType = CloudTextModelType.sparse})
+      : assert(textModelType != null);
 }
 
 /// Recognized text in an image.
@@ -143,7 +140,8 @@ abstract class TextContainer {
                 data['height'],
               )
             : null,
-        confidence = data['confidence']?.toDouble(),
+        confidence =
+            data['confidence'] == null ? null : data['confidence'].toDouble(),
         cornerPoints = List<Offset>.unmodifiable(
             data['points'].map<Offset>((dynamic point) => Offset(
                   point[0],

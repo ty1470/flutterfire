@@ -53,7 +53,7 @@ class UserWeb extends UserPlatform {
 
   @override
   Future<void> delete() async {
-    _assertIsSignedOut(auth);
+    _assertCurrentUser(auth);
     try {
       await _webUser.delete();
     } catch (e) {
@@ -63,7 +63,7 @@ class UserWeb extends UserPlatform {
 
   @override
   Future<String> getIdToken(bool forceRefresh) async {
-    _assertIsSignedOut(auth);
+    _assertCurrentUser(auth);
 
     try {
       return await _webUser.getIdToken(forceRefresh);
@@ -74,7 +74,7 @@ class UserWeb extends UserPlatform {
 
   @override
   Future<IdTokenResult> getIdTokenResult(bool forceRefresh) async {
-    _assertIsSignedOut(auth);
+    _assertCurrentUser(auth);
     return convertWebIdTokenResult(
         await _webUser.getIdTokenResult(forceRefresh));
   }
@@ -82,7 +82,7 @@ class UserWeb extends UserPlatform {
   @override
   Future<UserCredentialPlatform> linkWithCredential(
       AuthCredential credential) async {
-    _assertIsSignedOut(auth);
+    _assertCurrentUser(auth);
     try {
       return UserCredentialWeb(
           auth,
@@ -94,19 +94,15 @@ class UserWeb extends UserPlatform {
   }
 
   @override
-  Future<ConfirmationResultPlatform> linkWithPhoneNumber(
-    String phoneNumber,
-    RecaptchaVerifierFactoryPlatform applicationVerifier,
-  ) async {
-    _assertIsSignedOut(auth);
+  Future<ConfirmationResultPlatform> linkWithPhoneNumber(String phoneNumber,
+      RecaptchaVerifierFactoryPlatform applicationVerifier) async {
+    _assertCurrentUser(auth);
     try {
       // Do not inline - type is not inferred & error is thrown.
       auth_interop.RecaptchaVerifier verifier = applicationVerifier.delegate;
 
       return ConfirmationResultWeb(
-        auth,
-        await _webUser.linkWithPhoneNumber(phoneNumber, verifier),
-      );
+          this.auth, await _webUser.linkWithPhoneNumber(phoneNumber, verifier));
     } catch (e) {
       throw getFirebaseAuthException(e);
     }
@@ -115,10 +111,10 @@ class UserWeb extends UserPlatform {
   @override
   Future<UserCredentialPlatform> reauthenticateWithCredential(
       AuthCredential credential) async {
-    _assertIsSignedOut(auth);
+    _assertCurrentUser(auth);
     try {
       auth_interop.UserCredential userCredential = await _webUser
-          .reauthenticateWithCredential(convertPlatformCredential(credential)!);
+          .reauthenticateWithCredential(convertPlatformCredential(credential));
       return UserCredentialWeb(auth, userCredential);
     } catch (e) {
       throw getFirebaseAuthException(e);
@@ -127,7 +123,7 @@ class UserWeb extends UserPlatform {
 
   @override
   Future<void> reload() async {
-    _assertIsSignedOut(auth);
+    _assertCurrentUser(auth);
 
     try {
       await _webUser.reload();
@@ -138,13 +134,12 @@ class UserWeb extends UserPlatform {
   }
 
   @override
-  Future<void> sendEmailVerification(ActionCodeSettings? actionCodeSettings) {
-    _assertIsSignedOut(auth);
+  Future<void> sendEmailVerification(ActionCodeSettings actionCodeSettings) {
+    _assertCurrentUser(auth);
 
     try {
       return _webUser.sendEmailVerification(
-        convertPlatformActionCodeSettings(actionCodeSettings),
-      );
+          convertPlatformActionCodeSettings(actionCodeSettings));
     } catch (e) {
       throw getFirebaseAuthException(e);
     }
@@ -152,7 +147,7 @@ class UserWeb extends UserPlatform {
 
   @override
   Future<UserPlatform> unlink(String providerId) async {
-    _assertIsSignedOut(auth);
+    _assertCurrentUser(auth);
 
     try {
       return UserWeb(auth, await _webUser.unlink(providerId));
@@ -163,7 +158,7 @@ class UserWeb extends UserPlatform {
 
   @override
   Future<void> updateEmail(String newEmail) async {
-    _assertIsSignedOut(auth);
+    _assertCurrentUser(auth);
 
     try {
       await _webUser.updateEmail(newEmail);
@@ -176,7 +171,7 @@ class UserWeb extends UserPlatform {
 
   @override
   Future<void> updatePassword(String newPassword) async {
-    _assertIsSignedOut(auth);
+    _assertCurrentUser(auth);
 
     try {
       await _webUser.updatePassword(newPassword);
@@ -189,7 +184,7 @@ class UserWeb extends UserPlatform {
 
   @override
   Future<void> updatePhoneNumber(PhoneAuthCredential phoneCredential) async {
-    _assertIsSignedOut(auth);
+    _assertCurrentUser(auth);
 
     try {
       await _webUser
@@ -202,8 +197,8 @@ class UserWeb extends UserPlatform {
   }
 
   @override
-  Future<void> updateProfile(Map<String, String?> profile) async {
-    _assertIsSignedOut(auth);
+  Future<void> updateProfile(Map<String, String> profile) async {
+    _assertCurrentUser(auth);
 
     try {
       await _webUser.updateProfile(auth_interop.UserProfile(
@@ -218,16 +213,12 @@ class UserWeb extends UserPlatform {
   }
 
   @override
-  Future<void> verifyBeforeUpdateEmail(
-    String newEmail, [
-    ActionCodeSettings? actionCodeSettings,
-  ]) async {
-    _assertIsSignedOut(auth);
+  Future<void> verifyBeforeUpdateEmail(String newEmail,
+      [ActionCodeSettings /*?*/ actionCodeSettings]) async {
+    _assertCurrentUser(auth);
 
     await _webUser.verifyBeforeUpdateEmail(
-      newEmail,
-      convertPlatformActionCodeSettings(actionCodeSettings),
-    );
+        newEmail, convertPlatformActionCodeSettings(actionCodeSettings));
   }
 }
 
@@ -235,11 +226,10 @@ class UserWeb extends UserPlatform {
 /// a user, sign-out and then call a method on the user reference, we first check
 /// whether the user is signed out before calling a method. This replicates
 /// what happens on native since requests are sent over the method channel.
-void _assertIsSignedOut(FirebaseAuthPlatform instance) {
+_assertCurrentUser(FirebaseAuthPlatform instance) {
+  // TODO(ehesp): confirm after platform migration this is nullable
   if (instance.currentUser == null) {
     throw FirebaseAuthException(
-      code: 'no-current-user',
-      message: 'No user currently signed in.',
-    );
+        code: "no-current-user", message: "No user currently signed in.");
   }
 }

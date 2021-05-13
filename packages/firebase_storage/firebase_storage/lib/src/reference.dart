@@ -7,14 +7,14 @@ part of firebase_storage;
 /// Represents a reference to a Google Cloud Storage object. Developers can
 /// upload, download, and delete objects, as well as get/set object metadata.
 class Reference {
-  Reference._(this.storage, this._delegate) {
-    ReferencePlatform.verifyExtends(_delegate);
-  }
-
   ReferencePlatform _delegate;
 
   /// The storage service associated with this reference.
   final FirebaseStorage storage;
+
+  Reference._(this.storage, this._delegate) {
+    ReferencePlatform.verifyExtends(_delegate);
+  }
 
   /// The name of the bucket containing this reference's object.
   String get bucket => _delegate.bucket;
@@ -29,8 +29,8 @@ class Reference {
 
   /// A reference pointing to the parent location of this reference, or `null`
   /// if this reference is the root.
-  Reference? get parent {
-    ReferencePlatform? referenceParentPlatform = _delegate.parent;
+  Reference get parent {
+    ReferencePlatform /*?*/ referenceParentPlatform = _delegate.parent;
 
     if (referenceParentPlatform == null) {
       return null;
@@ -47,6 +47,7 @@ class Reference {
   /// [path] The relative path from this reference. Leading, trailing, and
   ///   consecutive slashes are removed.
   Reference child(String path) {
+    assert(path != null);
     return Reference._(storage, _delegate.child(path));
   }
 
@@ -70,10 +71,13 @@ class Reference {
   /// objects whose paths end with "/" or contain two consecutive "/"s. Firebase
   /// Storage List API will filter these unsupported objects. [list] may fail
   /// if there are too many unsupported objects in the bucket.
-  Future<ListResult> list([ListOptions? options]) async {
-    assert(options == null ||
-        options.maxResults == null ||
-        options.maxResults! > 0 && options.maxResults! <= 1000);
+  Future<ListResult> list([ListOptions /*?*/ options]) async {
+    if (options?.maxResults != null) {
+      assert(options.maxResults > 0);
+      assert(options.maxResults <= 1000);
+    }
+
+    // TODO(ehesp): options should be nullable post platform migration
     return ListResult._(storage, await _delegate.list(options));
   }
 
@@ -97,7 +101,8 @@ class Reference {
   ///
   /// If the [maxSize] (in bytes) is exceeded, the operation will be canceled. By
   /// default the [maxSize] is 10mb (10485760 bytes).
-  Future<Uint8List?> getData([int maxSize = 10485760]) async {
+  Future<Uint8List /*?*/ > getData([int maxSize]) async {
+    maxSize ??= 10485760;
     assert(maxSize > 0);
     return _delegate.getData(maxSize);
   }
@@ -107,14 +112,15 @@ class Reference {
   /// Use this method to upload fixed sized data as a [Uint8List].
   ///
   /// Optionally, you can also set metadata onto the uploaded object.
-  UploadTask putData(Uint8List data, [SettableMetadata? metadata]) {
+  UploadTask putData(Uint8List data, [SettableMetadata metadata]) {
+    assert(data != null);
     return UploadTask._(storage, _delegate.putData(data, metadata));
   }
 
   /// Upload a [Blob]. Note; this is only supported on web platforms.
   ///
   /// Optionally, you can also set metadata onto the uploaded object.
-  UploadTask putBlob(dynamic blob, [SettableMetadata? metadata]) {
+  UploadTask putBlob(dynamic blob, [SettableMetadata metadata]) {
     assert(blob != null);
     return UploadTask._(storage, _delegate.putBlob(blob, metadata));
   }
@@ -122,7 +128,8 @@ class Reference {
   /// Upload a [File] from the filesystem. The file must exist.
   ///
   /// Optionally, you can also set metadata onto the uploaded object.
-  UploadTask putFile(File file, [SettableMetadata? metadata]) {
+  UploadTask putFile(File file, [SettableMetadata metadata]) {
+    assert(file != null);
     assert(file.absolute.existsSync());
     return UploadTask._(storage, _delegate.putFile(file, metadata));
   }
@@ -140,37 +147,36 @@ class Reference {
   UploadTask putString(
     String data, {
     PutStringFormat format = PutStringFormat.raw,
-    SettableMetadata? metadata,
+    SettableMetadata metadata,
   }) {
-    String _data = data;
-    PutStringFormat _format = format;
-    SettableMetadata? _metadata = metadata;
+    assert(data != null);
+    assert(format != null);
 
     // Convert any raw string values into a Base64 format
     if (format == PutStringFormat.raw) {
-      _data = base64.encode(utf8.encode(_data));
-      _format = PutStringFormat.base64;
+      data = base64.encode(utf8.encode(data));
+      format = PutStringFormat.base64;
     }
 
     // Convert a data_url into a Base64 format
     if (format == PutStringFormat.dataUrl) {
-      _format = PutStringFormat.base64;
+      format = PutStringFormat.base64;
       UriData uri = UriData.fromUri(Uri.parse(data));
       assert(uri.isBase64);
-      _data = uri.contentText;
+      data = uri.contentText;
 
-      if (_metadata == null && uri.mimeType.isNotEmpty) {
-        _metadata = SettableMetadata(
+      if (metadata == null && uri.mimeType.isNotEmpty) {
+        metadata = SettableMetadata(
           contentType: uri.mimeType,
         );
       }
 
       // If the data_url contains a mime-type & the user has not provided it,
       // set it
-      if ((_metadata!.contentType == null || _metadata.contentType!.isEmpty) &&
+      if ((metadata.contentType == null || metadata.contentType.isEmpty) &&
           uri.mimeType.isNotEmpty) {
-        _metadata = SettableMetadata(
-          cacheControl: metadata!.cacheControl,
+        metadata = SettableMetadata(
+          cacheControl: metadata.cacheControl,
           contentDisposition: metadata.contentDisposition,
           contentEncoding: metadata.contentEncoding,
           contentLanguage: metadata.contentLanguage,
@@ -178,12 +184,14 @@ class Reference {
         );
       }
     }
-    return UploadTask._(
-        storage, _delegate.putString(_data, _format, _metadata));
+
+    // TODO(ehesp): Check metadata is nullable post platform migration
+    return UploadTask._(storage, _delegate.putString(data, format, metadata));
   }
 
   /// Updates the metadata on a storage object.
   Future<FullMetadata> updateMetadata(SettableMetadata metadata) {
+    assert(metadata != null);
     return _delegate.updateMetadata(metadata);
   }
 
@@ -191,17 +199,16 @@ class Reference {
   ///
   /// If a file already exists at the given location, it will be overwritten.
   DownloadTask writeToFile(File file) {
+    assert(file != null);
     return DownloadTask._(storage, _delegate.writeToFile(file));
   }
 
   @override
-  bool operator ==(Object other) =>
-      other is Reference &&
-      other.fullPath == fullPath &&
-      other.storage == storage;
+  bool operator ==(dynamic o) =>
+      o is Reference && o.fullPath == fullPath && o.storage == storage;
 
   @override
-  int get hashCode => hashValues(storage, fullPath);
+  int get hashCode => hash2(storage, fullPath);
 
   @override
   String toString() =>

@@ -12,15 +12,11 @@ class FirebaseFunctionsException extends FirebaseException
   // ignore: public_member_api_docs
   @protected
   FirebaseFunctionsException({
-    required String message,
-    required String code,
-    StackTrace? stackTrace,
+    @required String message,
+    String code,
+    StackTrace stackTrace,
     this.details,
-  }) : super(
-            plugin: 'firebase_functions',
-            message: message,
-            code: code,
-            stackTrace: stackTrace);
+  }) : super(plugin: 'firebase_functions', message: message, code: code);
 
   /// Additional data provided with the exception.
   final dynamic details;

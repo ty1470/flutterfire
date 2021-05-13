@@ -7,7 +7,8 @@ To learn more about Storage, please visit the [Firebase website](https://firebas
 
 ## Getting Started
 
-To get started with Cloud Storage for Flutter, please [see the documentation](https://firebase.flutter.dev/docs/storage/overview).
+To get started with Cloud Storage for Flutter, please [see the documentation](https://firebase.flutter.dev/docs/storage/overview)
+available at [https://firebase.flutter.dev](https://firebase.flutter.dev/docs/overview)
 
 ## Usage
 

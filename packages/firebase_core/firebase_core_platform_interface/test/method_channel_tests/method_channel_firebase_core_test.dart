@@ -61,10 +61,14 @@ void main() {
 
     group('.initializeApp()', () {
       test('should throw if trying to initialize default app', () async {
-        await expectLater(
-          () => channelPlatform.initializeApp(name: defaultFirebaseAppName),
-          throwsA(noDefaultAppInitialization()),
-        );
+        try {
+          await channelPlatform.initializeApp(name: defaultFirebaseAppName);
+        } on FirebaseException catch (e) {
+          expect(e, noDefaultAppInitialization());
+          return;
+        }
+
+        fail("FirebaseException not thrown");
       });
 
       test('should initialize core if not first initialized', () async {
@@ -103,32 +107,36 @@ void main() {
         });
 
         test('should throw if no default app is available', () async {
-          await expectLater(
-            channelPlatform.initializeApp,
-            throwsA(coreNotInitialized()),
-          );
+          try {
+            await channelPlatform.initializeApp();
+          } on FirebaseException catch (e) {
+            expect(e, coreNotInitialized());
+            return;
+          }
+
+          fail("FirebaseException not thrown");
         });
       });
 
       group('secondary apps', () {
         test('should throw if no options are provided with a named app',
             () async {
-          await expectLater(
-            () => channelPlatform.initializeApp(name: 'foo'),
-            throwsAssertionError,
-          );
+          try {
+            await channelPlatform.initializeApp(name: 'foo');
+          } catch (e) {
+            assert(
+                e.toString().contains(
+                    "FirebaseOptions cannot be null when creating a secondary Firebase app."),
+                true);
+          }
         });
 
         test('should initialize secondary apps', () async {
           await channelPlatform.initializeApp();
           await channelPlatform.initializeApp(
-            name: 'foo',
-            options: testOptions,
-          );
+              name: 'foo', options: testOptions);
           await channelPlatform.initializeApp(
-            name: 'bar',
-            options: testOptions,
-          );
+              name: 'bar', options: testOptions);
 
           expect(
             methodCallLog,
@@ -172,9 +180,7 @@ void main() {
 
       test('should remove a deleted app from the List', () async {
         FirebaseAppPlatform app = await channelPlatform.initializeApp(
-          name: 'foo',
-          options: testOptions,
-        );
+            name: 'foo', options: testOptions);
 
         // Default & foo
         expect(channelPlatform.apps.length, 2);
@@ -199,11 +205,16 @@ void main() {
         expect(app.options, testOptions);
       });
 
-      test('should throw if no named app was found', () {
-        expect(
-          () => channelPlatform.app('foo'),
-          throwsA(noAppExists('foo')),
-        );
+      test('should throw if no named app was found', () async {
+        String name = 'foo';
+        try {
+          channelPlatform.app(name);
+        } on FirebaseException catch (e) {
+          expect(e, noAppExists(name));
+          return;
+        }
+
+        fail("FirebaseException not thrown");
       });
     });
   });

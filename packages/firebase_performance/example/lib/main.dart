@@ -2,21 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart=2.9
-
 import 'dart:async';
 
 import 'package:http/http.dart';
 import 'package:flutter/material.dart';
-import 'package:pedantic/pedantic.dart';
 
 import 'package:firebase_performance/firebase_performance.dart';
 
-void main() => runApp(const MyApp());
+void main() => runApp(MyApp());
 
 class MyApp extends StatefulWidget {
-  const MyApp({Key key}) : super(key: key);
-
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -81,9 +76,9 @@ class _MyAppState extends State<MyApp> {
       _traceHasRan = false;
     });
 
-    final Trace trace = _performance.newTrace('test');
-    unawaited(trace.incrementMetric('metric1', 16));
-    unawaited(trace.putAttribute('favorite_color', 'blue'));
+    final Trace trace = _performance.newTrace("test");
+    trace.incrementMetric("metric1", 16);
+    trace.putAttribute("favorite_color", "blue");
 
     await trace.start();
 
@@ -108,11 +103,11 @@ class _MyAppState extends State<MyApp> {
     final _MetricHttpClient metricHttpClient = _MetricHttpClient(Client());
 
     final Request request = Request(
-      'SEND',
-      Uri.parse('https://www.google.com'),
+      "SEND",
+      Uri.parse("https://www.google.com"),
     );
 
-    unawaited(metricHttpClient.send(request));
+    metricHttpClient.send(request);
 
     setState(() {
       _httpMetricHasRan = true;
@@ -121,7 +116,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    const textStyle = TextStyle(color: Colors.lightGreenAccent, fontSize: 25);
+    final TextStyle textStyle =
+        const TextStyle(color: Colors.lightGreenAccent, fontSize: 25.0);
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -131,11 +127,11 @@ class _MyAppState extends State<MyApp> {
           child: Column(
             children: <Widget>[
               Text(_performanceCollectionMessage),
-              ElevatedButton(
+              RaisedButton(
                 onPressed: _togglePerformanceCollection,
                 child: const Text('Toggle Data Collection'),
               ),
-              ElevatedButton(
+              RaisedButton(
                 onPressed: _testTrace,
                 child: const Text('Run Trace'),
               ),
@@ -143,7 +139,7 @@ class _MyAppState extends State<MyApp> {
                 _traceHasRan ? 'Trace Ran!' : '',
                 style: textStyle,
               ),
-              ElevatedButton(
+              RaisedButton(
                 onPressed: _testHttpMetric,
                 child: const Text('Run HttpMetric'),
               ),

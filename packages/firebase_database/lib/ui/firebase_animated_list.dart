@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart=2.9
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -11,7 +9,7 @@ import '../firebase_database.dart';
 import 'firebase_list.dart';
 import 'firebase_sorted_list.dart';
 
-typedef FirebaseAnimatedListItemBuilder = Widget Function(
+typedef Widget FirebaseAnimatedListItemBuilder(
   BuildContext context,
   DataSnapshot snapshot,
   Animation<double> animation,
@@ -35,8 +33,9 @@ class FirebaseAnimatedList extends StatefulWidget {
     this.shrinkWrap = false,
     this.padding,
     this.duration = const Duration(milliseconds: 300),
-  })  : assert(itemBuilder != null),
-        super(key: key);
+  }) : super(key: key) {
+    assert(itemBuilder != null);
+  }
 
   /// A Firebase query to use to populate the animated list
   final Query query;

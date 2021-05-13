@@ -5,7 +5,7 @@
 import 'dart:async';
 
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
-import '../../firebase_storage_platform_interface.dart';
+import 'package:firebase_storage_platform_interface/firebase_storage_platform_interface.dart';
 
 /// The interface a task must implement.
 abstract class TaskPlatform extends PlatformInterface {
@@ -20,7 +20,8 @@ abstract class TaskPlatform extends PlatformInterface {
   /// This is used by the app-facing [Task] to ensure that
   /// the object in which it's going to delegate calls has been
   /// constructed properly.
-  static void verifyExtends(TaskPlatform instance) {
+  static verifyExtends(TaskPlatform instance) {
+    assert(instance != null);
     PlatformInterface.verifyToken(instance, _token);
   }
 
@@ -36,7 +37,7 @@ abstract class TaskPlatform extends PlatformInterface {
   }
 
   /// The latest [TaskSnapshot] for this task.
-  TaskSnapshotPlatform get snapshot {
+  TaskSnapshotPlatform /*!*/ get snapshot {
     throw UnimplementedError('snapshot is not implemented');
   }
 

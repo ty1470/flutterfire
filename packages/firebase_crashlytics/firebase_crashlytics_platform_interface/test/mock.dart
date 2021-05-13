@@ -8,9 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_crashlytics_platform_interface/src/method_channel/method_channel_crashlytics.dart';
 
 typedef MethodCallCallback = dynamic Function(MethodCall methodCall);
-typedef Callback = void Function(MethodCall call);
+typedef Callback(MethodCall call);
 
-void setupFirebaseCrashlyticsMocks([Callback? customHandlers]) {
+setupFirebaseCrashlyticsMocks([Callback /*?*/ customHandlers]) {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   MethodChannelFirebase.channel.setMockMethodCallHandler((call) async {
@@ -69,8 +69,8 @@ Future<void> testExceptionHandling(String type, Function testMethod) async {
       return;
     }
     fail(
-        'testExceptionHandling: $testMethod threw unexpected FirebaseException');
+        'testExceptionHandling: ${testMethod} threw unexpected FirebaseException');
   } catch (e) {
-    fail('testExceptionHandling: $testMethod threw invalid exception $e');
+    fail('testExceptionHandling: ${testMethod} threw invalid exception ${e}');
   }
 }

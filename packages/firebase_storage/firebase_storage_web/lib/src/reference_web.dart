@@ -2,39 +2,28 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-import 'dart:html' as html;
 import 'dart:typed_data';
+import 'dart:html' as html;
 
+import 'package:crypto/crypto.dart';
 import 'package:firebase_storage_platform_interface/firebase_storage_platform_interface.dart';
+import 'package:firebase_storage_web/src/task_web.dart';
+import 'package:firebase_storage_web/src/utils/list.dart';
+import 'package:firebase_storage_web/src/utils/metadata_cache.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 
-import './firebase_storage_web.dart';
-import './utils/errors.dart';
-import './utils/metadata.dart';
 import 'interop/storage.dart' as storage_interop;
-import 'task_web.dart';
-import 'utils/list.dart';
-import 'utils/metadata_cache.dart';
+import './firebase_storage_web.dart';
+import './utils/metadata.dart';
+import './utils/errors.dart';
 
-final _storageUrlPrefix = RegExp(r'^(?:gs|https?):\//');
+final _storageUrlPrefix = RegExp(r'^(?:gs|https?)://');
 
 /// The web implementation of a Firebase Storage 'ref'
 class ReferenceWeb extends ReferencePlatform {
-  /// Constructor for this ref
-  @override
-  ReferenceWeb(FirebaseStorageWeb storage, String path)
-      : _path = path,
-        super(storage, path) {
-    if (_path.startsWith(_storageUrlPrefix)) {
-      _ref = storage.webStorage!.refFromURL(_path);
-    } else {
-      _ref = storage.webStorage!.ref(_path);
-    }
-  }
-
   // The js-interop layer for the ref that is wrapped by this class...
-  late storage_interop.StorageReference _ref;
+  storage_interop.StorageReference _ref;
 
   // Remember what metadata has already been set on this ref.
   // TODO: Should this be initialized with the metadata currently in firebase?
@@ -42,6 +31,18 @@ class ReferenceWeb extends ReferencePlatform {
 
   // The path for the current ref
   final String _path;
+
+  /// Constructor for this ref
+  @override
+  ReferenceWeb(FirebaseStorageWeb storage, String path)
+      : _path = path,
+        super(storage, path) {
+    if (_path != null && _path.startsWith(_storageUrlPrefix)) {
+      _ref = storage.webStorage.refFromURL(_path);
+    } else {
+      _ref = storage.webStorage.ref(_path);
+    }
+  }
 
   // Platform overrides follow
 
@@ -89,7 +90,7 @@ class ReferenceWeb extends ReferencePlatform {
   /// Storage List API will filter these unsupported objects. [list] may fail
   /// if there are too many unsupported objects in the bucket.
   @override
-  Future<ListResultPlatform> list([ListOptions? options]) async {
+  Future<ListResultPlatform> list([ListOptions /*?*/ options]) async {
     try {
       storage_interop.ListResult listResult =
           await _ref.list(listOptionsToFbListOptions(options));
@@ -124,21 +125,21 @@ class ReferenceWeb extends ReferencePlatform {
   /// Returns a [Uint8List] of the data. If the [maxSize] (in bytes) is exceeded,
   /// the operation will be canceled.
   @override
-  Future<Uint8List?> getData(
+  Future<Uint8List /*?*/ > getData(
     int maxSize, {
     @visibleForTesting
-        Future<Uint8List> Function(Uri url) readBytes = http.readBytes,
+        Future<Uint8List> Function(dynamic url) readBytes = http.readBytes,
   }) async {
     if (maxSize > 0) {
       final metadata = await getMetadata();
-      if (metadata.size! > maxSize) {
+      if (metadata.size > maxSize) {
         return null;
       }
     }
 
     try {
       String url = await getDownloadURL();
-      return await readBytes(Uri.parse(url));
+      return await readBytes(url);
     } catch (e) {
       throw getFirebaseException(e);
     }
@@ -150,13 +151,14 @@ class ReferenceWeb extends ReferencePlatform {
   ///
   /// Optionally, you can also set metadata onto the uploaded object.
   @override
-  TaskPlatform putData(Uint8List data, [SettableMetadata? metadata]) {
+  TaskPlatform putData(Uint8List data, [SettableMetadata /*?*/ metadata]) {
     return TaskWeb(
       this,
       _ref.put(
         data,
         settableMetadataToFbUploadMetadata(
           _cache.store(metadata),
+          md5Hash: md5.convert(data).toString(),
         ),
       ),
     );
@@ -166,7 +168,7 @@ class ReferenceWeb extends ReferencePlatform {
   ///
   /// Optionally, you can also set metadata onto the uploaded object.
   @override
-  TaskPlatform putBlob(dynamic data, [SettableMetadata? metadata]) {
+  TaskPlatform putBlob(dynamic data, [SettableMetadata /*?*/ metadata]) {
     assert(data is html.Blob, 'data must be a dart:html Blob object.');
 
     return TaskWeb(
@@ -195,7 +197,7 @@ class ReferenceWeb extends ReferencePlatform {
   TaskPlatform putString(
     String data,
     PutStringFormat format, [
-    SettableMetadata? metadata,
+    SettableMetadata /*?*/ metadata,
   ]) {
     return TaskWeb(
       this,
@@ -204,6 +206,7 @@ class ReferenceWeb extends ReferencePlatform {
         putStringFormatToString(format),
         settableMetadataToFbUploadMetadata(
           _cache.store(metadata),
+          md5Hash: md5.convert(data.codeUnits).toString(),
         ),
       ),
     );

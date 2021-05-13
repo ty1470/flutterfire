@@ -26,10 +26,11 @@ class DocumentReferenceWeb extends DocumentReferencePlatform {
         super(firestore, path);
 
   @override
-  Future<void> set(Map<String, dynamic> data, [SetOptions? options]) async {
+  Future<void> set(Map<String, dynamic> data,
+      [SetOptions /*?*/ options]) async {
     try {
       await _delegate.set(
-        CodecUtility.encodeMapData(data)!,
+        CodecUtility.encodeMapData(data),
         convertSetOptions(options),
       );
     } catch (e) {
@@ -40,19 +41,18 @@ class DocumentReferenceWeb extends DocumentReferencePlatform {
   @override
   Future<void> update(Map<String, dynamic> data) async {
     try {
-      await _delegate.update(CodecUtility.encodeMapData(data)!);
+      await _delegate.update(data: CodecUtility.encodeMapData(data));
     } catch (e) {
       throw getFirebaseException(e);
     }
   }
 
   @override
-  Future<DocumentSnapshotPlatform> get(
-      [GetOptions options = const GetOptions()]) async {
+  Future<DocumentSnapshotPlatform> get([GetOptions /*?*/ options]) async {
     try {
       firestore_interop.DocumentSnapshot documentSnapshot =
           await _delegate.get(convertGetOptions(options));
-      return convertWebDocumentSnapshot(firestore, documentSnapshot);
+      return convertWebDocumentSnapshot(this.firestore, documentSnapshot);
     } catch (e) {
       throw getFirebaseException(e);
     }
@@ -77,8 +77,8 @@ class DocumentReferenceWeb extends DocumentReferencePlatform {
       querySnapshots = _delegate.onMetadataChangesSnapshot;
     }
     return querySnapshots
-        .map(
-            (webSnapshot) => convertWebDocumentSnapshot(firestore, webSnapshot))
+        .map((webSnapshot) =>
+            convertWebDocumentSnapshot(this.firestore, webSnapshot))
         .handleError((e) {
       throw getFirebaseException(e);
     });

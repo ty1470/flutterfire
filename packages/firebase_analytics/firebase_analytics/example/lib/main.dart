@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart=2.9
-
 import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -16,12 +14,10 @@ import 'tabs_page.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key key}) : super(key: key);
-
   static FirebaseAnalytics analytics = FirebaseAnalytics();
   static FirebaseAnalyticsObserver observer =
       FirebaseAnalyticsObserver(analytics: analytics);
@@ -52,10 +48,14 @@ class MyHomePage extends StatefulWidget {
   final FirebaseAnalyticsObserver observer;
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _MyHomePageState createState() => _MyHomePageState(analytics, observer);
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  _MyHomePageState(this.analytics, this.observer);
+
+  final FirebaseAnalyticsObserver observer;
+  final FirebaseAnalytics analytics;
   String _message = '';
 
   void setMessage(String message) {
@@ -65,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _sendAnalyticsEvent() async {
-    await widget.analytics.logEvent(
+    await analytics.logEvent(
       name: 'test_event',
       parameters: <String, dynamic>{
         'string': 'string',
@@ -79,12 +79,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _testSetUserId() async {
-    await widget.analytics.setUserId('some-user');
+    await analytics.setUserId('some-user');
     setMessage('setUserId succeeded');
   }
 
   Future<void> _testSetCurrentScreen() async {
-    await widget.analytics.setCurrentScreen(
+    await analytics.setCurrentScreen(
       screenName: 'Analytics Demo',
       screenClassOverride: 'AnalyticsDemo',
     );
@@ -92,50 +92,50 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _testSetAnalyticsCollectionEnabled() async {
-    await widget.analytics.setAnalyticsCollectionEnabled(false);
-    await widget.analytics.setAnalyticsCollectionEnabled(true);
+    await analytics.setAnalyticsCollectionEnabled(false);
+    await analytics.setAnalyticsCollectionEnabled(true);
     setMessage('setAnalyticsCollectionEnabled succeeded');
   }
 
   Future<void> _testSetSessionTimeoutDuration() async {
-    await widget.analytics.android?.setSessionTimeoutDuration(2000000);
+    await analytics.android?.setSessionTimeoutDuration(2000000);
     setMessage('setSessionTimeoutDuration succeeded');
   }
 
   Future<void> _testSetUserProperty() async {
-    await widget.analytics.setUserProperty(name: 'regular', value: 'indeed');
+    await analytics.setUserProperty(name: 'regular', value: 'indeed');
     setMessage('setUserProperty succeeded');
   }
 
   Future<void> _testAllEventTypes() async {
-    await widget.analytics.logAddPaymentInfo();
-    await widget.analytics.logAddToCart(
+    await analytics.logAddPaymentInfo();
+    await analytics.logAddToCart(
       currency: 'USD',
-      value: 123,
+      value: 123.0,
       itemId: 'test item id',
       itemName: 'test item name',
       itemCategory: 'test item category',
       quantity: 5,
-      price: 24,
+      price: 24.0,
       origin: 'test origin',
       itemLocationId: 'test location id',
       destination: 'test destination',
       startDate: '2015-09-14',
       endDate: '2015-09-17',
     );
-    await widget.analytics.logAddToWishlist(
+    await analytics.logAddToWishlist(
       itemId: 'test item id',
       itemName: 'test item name',
       itemCategory: 'test item category',
       quantity: 5,
-      price: 24,
-      value: 123,
+      price: 24.0,
+      value: 123.0,
       currency: 'USD',
       itemLocationId: 'test location id',
     );
-    await widget.analytics.logAppOpen();
-    await widget.analytics.logBeginCheckout(
-      value: 123,
+    await analytics.logAppOpen();
+    await analytics.logBeginCheckout(
+      value: 123.0,
       currency: 'USD',
       transactionId: 'test tx id',
       numberOfNights: 2,
@@ -147,7 +147,7 @@ class _MyHomePageState extends State<MyHomePage> {
       endDate: '2015-09-17',
       travelClass: 'test travel class',
     );
-    await widget.analytics.logCampaignDetails(
+    await analytics.logCampaignDetails(
       source: 'test source',
       medium: 'test medium',
       campaign: 'test campaign',
@@ -156,11 +156,11 @@ class _MyHomePageState extends State<MyHomePage> {
       aclid: 'test aclid',
       cp1: 'test cp1',
     );
-    await widget.analytics.logEarnVirtualCurrency(
+    await analytics.logEarnVirtualCurrency(
       virtualCurrencyName: 'bitcoin',
       value: 345.66,
     );
-    await widget.analytics.logEcommercePurchase(
+    await analytics.logEcommercePurchase(
       currency: 'USD',
       value: 432.45,
       transactionId: 'test tx id',
@@ -177,24 +177,24 @@ class _MyHomePageState extends State<MyHomePage> {
       endDate: '2015-09-14',
       travelClass: 'test travel class',
     );
-    await widget.analytics.logGenerateLead(
+    await analytics.logGenerateLead(
       currency: 'USD',
       value: 123.45,
     );
-    await widget.analytics.logJoinGroup(
+    await analytics.logJoinGroup(
       groupId: 'test group id',
     );
-    await widget.analytics.logLevelUp(
+    await analytics.logLevelUp(
       level: 5,
       character: 'witch doctor',
     );
-    await widget.analytics.logLogin();
-    await widget.analytics.logPostScore(
+    await analytics.logLogin();
+    await analytics.logPostScore(
       score: 1000000,
       level: 70,
       character: 'tiefling cleric',
     );
-    await widget.analytics.logPresentOffer(
+    await analytics.logPresentOffer(
       itemId: 'test item id',
       itemName: 'test item name',
       itemCategory: 'test item category',
@@ -204,12 +204,12 @@ class _MyHomePageState extends State<MyHomePage> {
       currency: 'USD',
       itemLocationId: 'test item location id',
     );
-    await widget.analytics.logPurchaseRefund(
+    await analytics.logPurchaseRefund(
       currency: 'USD',
       value: 45.67,
       transactionId: 'test tx id',
     );
-    await widget.analytics.logSearch(
+    await analytics.logSearch(
       searchTerm: 'hotel',
       numberOfNights: 2,
       numberOfRooms: 1,
@@ -220,26 +220,26 @@ class _MyHomePageState extends State<MyHomePage> {
       endDate: '2015-09-16',
       travelClass: 'test travel class',
     );
-    await widget.analytics.logSelectContent(
+    await analytics.logSelectContent(
       contentType: 'test content type',
       itemId: 'test item id',
     );
-    await widget.analytics.logShare(
+    await analytics.logShare(
         contentType: 'test content type',
         itemId: 'test item id',
         method: 'facebook');
-    await widget.analytics.logSignUp(
+    await analytics.logSignUp(
       signUpMethod: 'test sign up method',
     );
-    await widget.analytics.logSpendVirtualCurrency(
+    await analytics.logSpendVirtualCurrency(
       itemName: 'test item name',
       virtualCurrencyName: 'bitcoin',
       value: 34,
     );
-    await widget.analytics.logTutorialBegin();
-    await widget.analytics.logTutorialComplete();
-    await widget.analytics.logUnlockAchievement(id: 'all Firebase API covered');
-    await widget.analytics.logViewItem(
+    await analytics.logTutorialBegin();
+    await analytics.logTutorialComplete();
+    await analytics.logUnlockAchievement(id: 'all Firebase API covered');
+    await analytics.logViewItem(
       itemId: 'test item id',
       itemName: 'test item name',
       itemCategory: 'test item category',
@@ -259,10 +259,10 @@ class _MyHomePageState extends State<MyHomePage> {
       searchTerm: 'test search term',
       travelClass: 'test travel class',
     );
-    await widget.analytics.logViewItemList(
+    await analytics.logViewItemList(
       itemCategory: 'test item category',
     );
-    await widget.analytics.logViewSearchResults(
+    await analytics.logViewSearchResults(
       searchTerm: 'test search term',
     );
     setMessage('All standard events logged successfully');
@@ -277,47 +277,46 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         children: <Widget>[
           MaterialButton(
-            onPressed: _sendAnalyticsEvent,
             child: const Text('Test logEvent'),
+            onPressed: _sendAnalyticsEvent,
           ),
           MaterialButton(
-            onPressed: _testAllEventTypes,
             child: const Text('Test standard event types'),
+            onPressed: _testAllEventTypes,
           ),
           MaterialButton(
-            onPressed: _testSetUserId,
             child: const Text('Test setUserId'),
+            onPressed: _testSetUserId,
           ),
           MaterialButton(
-            onPressed: _testSetCurrentScreen,
             child: const Text('Test setCurrentScreen'),
+            onPressed: _testSetCurrentScreen,
           ),
           MaterialButton(
-            onPressed: _testSetAnalyticsCollectionEnabled,
             child: const Text('Test setAnalyticsCollectionEnabled'),
+            onPressed: _testSetAnalyticsCollectionEnabled,
           ),
           MaterialButton(
-            onPressed: _testSetSessionTimeoutDuration,
             child: const Text('Test setSessionTimeoutDuration'),
+            onPressed: _testSetSessionTimeoutDuration,
           ),
           MaterialButton(
-            onPressed: _testSetUserProperty,
             child: const Text('Test setUserProperty'),
+            onPressed: _testSetUserProperty,
           ),
           Text(_message,
               style: const TextStyle(color: Color.fromARGB(255, 0, 155, 0))),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute<TabsPage>(
-              settings: const RouteSettings(name: TabsPage.routeName),
-              builder: (BuildContext context) {
-                return TabsPage(widget.observer);
-              }));
-        },
-        child: const Icon(Icons.tab),
-      ),
+          child: const Icon(Icons.tab),
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute<TabsPage>(
+                settings: const RouteSettings(name: TabsPage.routeName),
+                builder: (BuildContext context) {
+                  return TabsPage(observer);
+                }));
+          }),
     );
   }
 }

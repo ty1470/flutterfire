@@ -35,30 +35,21 @@ void main() {
 
 class ImplementsFirebasePlatform implements FirebasePlatform {
   @override
-  Future<FirebaseAppPlatform> initializeApp({
-    String? name,
-    FirebaseOptions? options,
-  }) async {
-    return FakeFirebaseAppPlatform();
-  }
+  Future<FirebaseAppPlatform> initializeApp(
+          {String name, FirebaseOptions options}) =>
+      null;
 
   @override
   FirebaseAppPlatform app([String name = defaultFirebaseAppName]) {
-    return FakeFirebaseAppPlatform();
+    return null;
   }
 
   @override
-  List<FirebaseAppPlatform> get apps => [];
+  List<FirebaseAppPlatform> get apps => null;
 }
-
-// ignore: avoid_implementing_value_types
-class FakeFirebaseAppPlatform extends Fake implements FirebaseAppPlatform {}
 
 class ExtendsFirebasePlatform extends FirebasePlatform {}
 
 class FirebaseCoreMockPlatform extends Mock
-    with
-        // ignore: prefer_mixin, plugin_platform_interface needs to migrate to use `mixin`
-        MockPlatformInterfaceMixin
-    implements
-        FirebasePlatform {}
+    with MockPlatformInterfaceMixin
+    implements FirebasePlatform {}

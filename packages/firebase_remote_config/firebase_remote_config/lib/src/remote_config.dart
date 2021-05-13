@@ -2,19 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart=2.9
-
 part of firebase_remote_config;
 
 /// The entry point for accessing Remote Config.
 ///
 /// You can get an instance by calling [RemoteConfig.instance]. Note
 /// [RemoteConfig.instance] is async.
-// ignore: prefer_mixin
 class RemoteConfig extends FirebasePluginPlatform with ChangeNotifier {
-  RemoteConfig._({this.app})
-      : super(app.name, 'plugins.flutter.io/firebase_remote_config');
-
   // Cached instances of [FirebaseRemoteConfig].
   static final Map<String, RemoteConfig> _firebaseRemoteConfigInstances = {};
 
@@ -29,15 +23,18 @@ class RemoteConfig extends FirebasePluginPlatform with ChangeNotifier {
   /// If called and no [_delegatePackingProperty] exists, it will first be
   /// created and assigned before returning the delegate.
   FirebaseRemoteConfigPlatform get _delegate {
-    return _delegatePackingProperty ??=
-        FirebaseRemoteConfigPlatform.instanceFor(
+    _delegatePackingProperty ??= FirebaseRemoteConfigPlatform.instanceFor(
       app: app,
       pluginConstants: pluginConstants,
     );
+    return _delegatePackingProperty;
   }
 
   /// The [FirebaseApp] this instance was initialized with.
   final FirebaseApp app;
+
+  RemoteConfig._({this.app})
+      : super(app.name, 'plugins.flutter.io/firebase_remote_config');
 
   /// Returns an instance using the default [FirebaseApp].
   static RemoteConfig get instance {
@@ -151,7 +148,7 @@ class RemoteConfig extends FirebasePluginPlatform with ChangeNotifier {
     // To be consistent with iOS fetchTimeout is set to the default
     // 1 minute (60 seconds) if an attempt is made to set it to zero seconds.
     if (remoteConfigSettings.fetchTimeout.inSeconds == 0) {
-      remoteConfigSettings.fetchTimeout = const Duration(seconds: 60);
+      remoteConfigSettings.fetchTimeout = Duration(seconds: 60);
     }
     return _delegate.setConfigSettings(remoteConfigSettings);
   }

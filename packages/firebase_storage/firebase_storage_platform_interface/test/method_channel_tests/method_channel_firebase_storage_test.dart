@@ -14,9 +14,9 @@ import '../mock.dart';
 void main() {
   setupFirebaseStorageMocks();
 
-  FirebaseStoragePlatform? storage;
-  FirebaseApp? app;
-  FirebaseApp? secondaryApp;
+  /*late*/ FirebaseStoragePlatform storage;
+  /*late*/ FirebaseApp app;
+  /*late*/ FirebaseApp secondaryApp;
 
   String kBucket = 'foo';
 
@@ -33,32 +33,31 @@ void main() {
         ),
       );
 
-      storage = MethodChannelFirebaseStorage(app: app!, bucket: '');
+      storage = MethodChannelFirebaseStorage(app: app);
     });
 
     group('constructor', () {
       test('should create an instance with no args', () {
         MethodChannelFirebaseStorage test =
-            MethodChannelFirebaseStorage(app: app!, bucket: kBucket);
+            MethodChannelFirebaseStorage(app: app, bucket: kBucket);
         expect(test.app, equals(Firebase.app()));
       });
 
       test('create an instance with default app', () {
         MethodChannelFirebaseStorage test =
-            MethodChannelFirebaseStorage(app: Firebase.app(), bucket: '');
+            MethodChannelFirebaseStorage(app: Firebase.app());
         expect(test.app, equals(Firebase.app()));
       });
       test('create an instance with a secondary app', () {
         MethodChannelFirebaseStorage test =
-            MethodChannelFirebaseStorage(app: secondaryApp!, bucket: '');
+            MethodChannelFirebaseStorage(app: secondaryApp);
         expect(test.app, equals(secondaryApp));
       });
 
       test('allow multiple instances', () {
-        MethodChannelFirebaseStorage test1 =
-            MethodChannelFirebaseStorage(app: Firebase.app(), bucket: '');
+        MethodChannelFirebaseStorage test1 = MethodChannelFirebaseStorage();
         MethodChannelFirebaseStorage test2 =
-            MethodChannelFirebaseStorage(app: secondaryApp!, bucket: '');
+            MethodChannelFirebaseStorage(app: secondaryApp);
         expect(test1.app, equals(Firebase.app()));
         expect(test2.app, equals(secondaryApp));
       });
@@ -87,7 +86,7 @@ void main() {
     group('delegateFor()', () {
       test('returns a [FirebaseStoragePlatform] with arguments', () {
         final testStorage = TestMethodChannelFirebaseStorage(Firebase.app());
-        final result = testStorage.delegateFor(app: Firebase.app(), bucket: '');
+        final result = testStorage.delegateFor(app: Firebase.app());
         expect(result, isA<FirebaseStoragePlatform>());
         expect(result.app, isA<FirebaseApp>());
       });
@@ -95,7 +94,7 @@ void main() {
 
     group('ref', () {
       test('should return a [ReferencePlatform]', () {
-        final result = storage!.ref('foo.bar');
+        final result = storage.ref('foo.bar');
         expect(result, isInstanceOf<ReferencePlatform>());
       });
     });
@@ -103,6 +102,5 @@ void main() {
 }
 
 class TestMethodChannelFirebaseStorage extends MethodChannelFirebaseStorage {
-  TestMethodChannelFirebaseStorage(FirebaseApp app)
-      : super(app: app, bucket: '');
+  TestMethodChannelFirebaseStorage(FirebaseApp app) : super(app: app);
 }

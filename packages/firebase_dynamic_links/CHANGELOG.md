@@ -1,17 +1,6 @@
-## 2.0.0-dev.0
+## 0.7.0+1
 
-> Note: This release has breaking changes.
-
- - **DOCS**: remove incorrect ARCHS in ios examples (#5450).
- - **CHORE**: publish packages (#5429).
- - **CHORE**: merge all analysis_options.yaml into one (#5329).
- - **CHORE**: publish packages.
- - **CHORE**: enable lints for firebase_dynamic_links (#5256).
- - **BREAKING** **FEAT**: Migrate firebase_dynamic_links to sound null safety (#5368).
-
-## 0.8.0
-
- - This version is not null-safe but has been created to allow compatibility with other null-safe FlutterFire packages such as `firebase_core`.
+ - Update a dependency to the latest release.
 
 ## 0.7.0
 

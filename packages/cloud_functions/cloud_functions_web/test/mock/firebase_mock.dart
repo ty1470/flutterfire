@@ -69,10 +69,8 @@ class FirebaseMock {
 
 @JS()
 class Promise<T> {
-  external Promise(
-      void Function(void Function(T result) resolve, Function reject) executor);
-  external Promise then(void Function(T result) onFulfilled,
-      [Function onRejected]);
+  external Promise(void executor(void resolve(T result), Function reject));
+  external Promise then(void onFulfilled(T result), [Function onRejected]);
 }
 
 // Wire to the global 'window.firebase' object.

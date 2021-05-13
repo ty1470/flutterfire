@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart=2.9
-
 import 'dart:async';
 
 import 'package:flutter_driver/driver_extension.dart';
@@ -29,7 +27,7 @@ void main() {
       final BannerAd bannerAd = BannerAd(
         adUnitId: BannerAd.testAdUnitId,
         size: AdSize.banner,
-        targetingInfo: const MobileAdTargetingInfo(
+        targetingInfo: MobileAdTargetingInfo(
           keywords: <String>['foo', 'bar'],
           contentUrl: 'http://foo.com/bar.html',
           childDirected: true,
@@ -49,7 +47,7 @@ void main() {
 
       final InterstitialAd interstitialAd = InterstitialAd(
         adUnitId: InterstitialAd.testAdUnitId,
-        targetingInfo: const MobileAdTargetingInfo(
+        targetingInfo: MobileAdTargetingInfo(
           keywords: <String>['foo', 'bar'],
           contentUrl: 'http://foo.com/bar.html',
           childDirected: true,
@@ -74,7 +72,7 @@ void main() {
       // Request with a targeting info
       hasStartedLoading = await RewardedVideoAd.instance.load(
         adUnitId: RewardedVideoAd.testAdUnitId,
-        targetingInfo: const MobileAdTargetingInfo(
+        targetingInfo: MobileAdTargetingInfo(
           keywords: <String>['foo', 'bar'],
           contentUrl: 'http://foo.com/bar.html',
           childDirected: true,
@@ -90,7 +88,7 @@ void main() {
       final NativeAd nativeAd = NativeAd(
         adUnitId: NativeAd.testAdUnitId,
         factoryId: 'adFactoryExample',
-        targetingInfo: const MobileAdTargetingInfo(
+        targetingInfo: MobileAdTargetingInfo(
           keywords: <String>['foo', 'bar'],
           contentUrl: 'http://foo.com/bar.html',
           childDirected: true,

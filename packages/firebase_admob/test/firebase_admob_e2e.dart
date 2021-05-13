@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'dart:async';
 import 'dart:io';
 
@@ -7,7 +5,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:e2e/e2e.dart';
 
 import 'package:firebase_admob/firebase_admob.dart';
-import 'package:pedantic/pedantic.dart';
 
 void main() {
   E2EWidgetsFlutterBinding.ensureInitialized();
@@ -25,27 +22,27 @@ void main() {
     final NativeAd nativeAd = NativeAd(
       adUnitId: NativeAd.testAdUnitId,
       factoryId: 'adFactoryExample',
-      targetingInfo: const MobileAdTargetingInfo(
+      targetingInfo: MobileAdTargetingInfo(
         keywords: <String>['foo', 'bar'],
         contentUrl: 'http://foo.com/bar.html',
         childDirected: true,
         nonPersonalizedAds: true,
       ),
       listener: (MobileAdEvent event) {
-        // ignore: avoid_print
         print('NativeAd event: $event');
         if (event == MobileAdEvent.loaded) adLoaded = true;
       },
     );
 
     await nativeAd.load();
-    await Future<void>.delayed(const Duration(seconds: 10));
+    await Future<void>.delayed(Duration(seconds: 10));
     expect(adLoaded, isTrue);
   });
 
   // TODO(bparrishMines): Unskip on Android once tests work on Firebase TestLab.
   // See https://github.com/FirebaseExtended/flutterfire/issues/2384
-  testWidgets('Load two Ads Simultaneously', (WidgetTester tester) async {
+  // ignore: missing_return
+  testWidgets('Load two Ads Simultaneously', (WidgetTester tester) {
     final Completer<void> adCompleter1 = Completer<void>();
     final Completer<void> adCompleter2 = Completer<void>();
 
@@ -65,10 +62,10 @@ void main() {
       },
     );
 
-    unawaited(bannerAd1.load());
-    unawaited(bannerAd2.load());
+    bannerAd1.load();
+    bannerAd2.load();
 
-    await expectLater(adCompleter1.future, completes);
-    await expectLater(adCompleter2.future, completes);
+    expect(adCompleter1.future, completes);
+    expect(adCompleter2.future, completes);
   }, skip: Platform.isAndroid);
 }

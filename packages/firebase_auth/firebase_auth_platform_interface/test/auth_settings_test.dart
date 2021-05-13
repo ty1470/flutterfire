@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('$AuthSettings', () {
     test('creates instance of [AuthSettings] ', () {
-      const authSettings = AuthSettings();
+      final authSettings = AuthSettings();
 
       expect(authSettings, isA<AuthSettings>());
       expect(authSettings.appVerificationDisabledForTesting, isNull);
@@ -17,12 +17,11 @@ void main() {
     test('sets appVerificationDisabledForTesting with given value', () {
       // set appVerificationDisabledForTesting to true
       AuthSettings authSettings =
-          const AuthSettings(appVerificationDisabledForTesting: true);
+          AuthSettings(appVerificationDisabledForTesting: true);
       expect(authSettings.appVerificationDisabledForTesting, isTrue);
 
       // set appVerificationDisabledForTesting to false
-      authSettings =
-          const AuthSettings(appVerificationDisabledForTesting: false);
+      authSettings = AuthSettings(appVerificationDisabledForTesting: false);
       expect(authSettings.appVerificationDisabledForTesting, isFalse);
     });
   });

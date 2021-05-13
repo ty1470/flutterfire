@@ -9,13 +9,13 @@ void main() {
   group('$Settings', () {
     test('equality', () {
       expect(
-          const Settings(
+          Settings(
             persistenceEnabled: true,
             host: 'foo bar',
             sslEnabled: true,
             cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
           ),
-          equals(const Settings(
+          equals(Settings(
             persistenceEnabled: true,
             host: 'foo bar',
             sslEnabled: true,
@@ -24,7 +24,7 @@ void main() {
     });
 
     test('returns a map of settings', () {
-      expect(const Settings().asMap, <String, dynamic>{
+      expect(Settings().asMap, <String, dynamic>{
         'persistenceEnabled': null,
         'host': null,
         'sslEnabled': null,
@@ -32,7 +32,7 @@ void main() {
       });
 
       expect(
-          const Settings(
+          Settings(
             persistenceEnabled: true,
             host: 'foo bar',
             sslEnabled: true,

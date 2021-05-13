@@ -25,11 +25,9 @@ class FirebaseCoreWeb extends FirebasePlatform {
   /// The default app instance cannot be initialized here and should be created
   /// using the platform Firebase integration.
   @override
-  Future<FirebaseAppPlatform> initializeApp({
-    String? name,
-    FirebaseOptions? options,
-  }) async {
-    firebase.App? app;
+  Future<FirebaseAppPlatform> initializeApp(
+      {String /*?*/ name, FirebaseOptions /*?*/ options}) async {
+    firebase.App /*?*/ app;
 
     if (name == defaultFirebaseAppName) {
       throw noDefaultAppInitialization();
@@ -47,16 +45,19 @@ class FirebaseCoreWeb extends FirebasePlatform {
 
         rethrow;
       }
+
+      // TODO(ehesp): Is this required? It would throw before getting here?
+      if (app == null) {
+        throw coreNotInitialized();
+      }
     } else {
-      assert(
-        options != null,
-        'FirebaseOptions cannot be null when creating a secondary Firebase app.',
-      );
+      assert(options != null,
+          "FirebaseOptions cannot be null when creating a secondary Firebase app.");
 
       try {
         app = firebase.initializeApp(
           name: name,
-          apiKey: options!.apiKey,
+          apiKey: options.apiKey,
           authDomain: options.authDomain,
           databaseURL: options.databaseURL,
           projectId: options.projectId,

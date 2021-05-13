@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:e2e/e2e.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -22,7 +20,6 @@ void main() {
         'welcome': 'default welcome',
         'hello': 'default hello',
       });
-      await remoteConfig.ensureInitialized();
     });
 
     testWidgets('fetch', (WidgetTester tester) async {

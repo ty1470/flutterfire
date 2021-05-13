@@ -34,9 +34,10 @@ class ActionCodeInfo {
   // ignore: public_member_api_docs
   @protected
   ActionCodeInfo({
-    required int operation,
-    required Map<String, dynamic> data,
-  })   : _operation = operation,
+    @required int /*!*/ operation,
+    @required Map<String, dynamic> data,
+  })  : assert(data != null),
+        _operation = operation,
         _data = data;
 
   int _operation;

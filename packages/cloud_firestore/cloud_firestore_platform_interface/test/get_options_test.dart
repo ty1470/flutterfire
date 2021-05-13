@@ -7,8 +7,12 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('$GetOptions', () {
+    test('throws if source is a null value', () {
+      expect(() => GetOptions(source: null), throwsAssertionError);
+    });
+
     test('provides a default source if none provided', () {
-      expect(const GetOptions().source, equals(Source.serverAndCache));
+      expect(GetOptions().source, equals(Source.serverAndCache));
     });
   });
 }

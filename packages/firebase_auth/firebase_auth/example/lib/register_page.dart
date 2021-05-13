@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart=2.9
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_signin_button/button_builder.dart';
@@ -37,7 +35,7 @@ class _RegisterPageState extends State<RegisterPage> {
           key: _formKey,
           child: Card(
             child: Padding(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -63,14 +61,14 @@ class _RegisterPageState extends State<RegisterPage> {
                     obscureText: true,
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
                     alignment: Alignment.center,
                     child: SignInButtonBuilder(
                       icon: Icons.person_add,
                       backgroundColor: Colors.blueGrey,
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
-                          await _register();
+                          _register();
                         }
                       },
                       text: 'Register',
@@ -81,7 +79,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: Text(_success == null
                         ? ''
                         : (_success
-                            ? 'Successfully registered $_userEmail'
+                            ? 'Successfully registered ' + _userEmail
                             : 'Registration failed')),
                   )
                 ],
@@ -100,7 +98,7 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   // Example code for registration.
-  Future<void> _register() async {
+  void _register() async {
     final User user = (await _auth.createUserWithEmailAndPassword(
       email: _emailController.text,
       password: _passwordController.text,

@@ -14,7 +14,6 @@ part of firebase_core_platform_interface;
 ///   print(e.toString());
 /// }
 /// ```
-@immutable
 class FirebaseException implements Exception {
   /// A generic class which provides exceptions in a Firebase-friendly format
   /// to users.
@@ -26,12 +25,11 @@ class FirebaseException implements Exception {
   ///   print(e.toString());
   /// }
   /// ```
-  FirebaseException({
-    required this.plugin,
-    this.message,
-    this.code = 'unknown',
-    this.stackTrace,
-  });
+  FirebaseException(
+      {@required this.plugin,
+      @required this.message,
+      this.code = 'unknown',
+      this.stackTrace});
 
   /// The plugin the exception is for.
   ///
@@ -40,7 +38,7 @@ class FirebaseException implements Exception {
   final String plugin;
 
   /// The long form message of the exception.
-  final String? message;
+  final String message;
 
   /// The optional code to accommodate the message.
   ///
@@ -51,24 +49,26 @@ class FirebaseException implements Exception {
 
   /// The stack trace which provides information to the user about the call
   /// sequence that triggered an exception
-  final StackTrace? stackTrace;
+  final StackTrace /*?*/ stackTrace;
 
   @override
-  bool operator ==(Object other) {
+  bool operator ==(dynamic other) {
     if (identical(this, other)) return true;
     if (other is! FirebaseException) return false;
     return other.hashCode == hashCode;
   }
 
   @override
-  int get hashCode => hashValues(plugin, code, message);
+  int get hashCode {
+    return hash3(plugin, code, message);
+  }
 
   @override
   String toString() {
-    String output = '[$plugin/$code] $message';
+    String output = "[$plugin/$code] $message";
 
     if (stackTrace != null) {
-      output += '\n\n${stackTrace.toString()}';
+      output += "\n\n${stackTrace.toString()}";
     }
 
     return output;

@@ -7,52 +7,46 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 
-import '../platform_interface/platform_interface_crashlytics.dart';
 import './utils/exception.dart';
+import '../platform_interface/platform_interface_crashlytics.dart';
 
 /// The entry point for accessing a method channel based Crashlytics instance.
 ///
 /// You can get an instance by calling [MethodChannelFirebaseCrashlytics.instance].
 class MethodChannelFirebaseCrashlytics extends FirebaseCrashlyticsPlatform {
   /// Create an instance of [MethodChannelFirebaseCrashlytics].
-  MethodChannelFirebaseCrashlytics({required FirebaseApp app})
-      : super(appInstance: app);
+  MethodChannelFirebaseCrashlytics({FirebaseApp app}) : super(appInstance: app);
 
   /// The [MethodChannel] used to communicate with the native plugin
-  static MethodChannel channel = const MethodChannel(
+  static MethodChannel channel = MethodChannel(
     'plugins.flutter.io/firebase_crashlytics',
   );
 
-  bool? _isCrashlyticsCollectionEnabled;
+  bool /*!*/ _isCrashlyticsCollectionEnabled;
 
   @override
   bool get isCrashlyticsCollectionEnabled {
-    return _isCrashlyticsCollectionEnabled!;
+    return _isCrashlyticsCollectionEnabled;
   }
 
   @override
   MethodChannelFirebaseCrashlytics setInitialValues({
-    required bool isCrashlyticsCollectionEnabled,
+    bool /*!*/ isCrashlyticsCollectionEnabled,
   }) {
-    _isCrashlyticsCollectionEnabled = isCrashlyticsCollectionEnabled;
+    this._isCrashlyticsCollectionEnabled = isCrashlyticsCollectionEnabled;
     return this;
   }
 
   @override
-  Future<bool> checkForUnsentReports() async {
-    if (isCrashlyticsCollectionEnabled) {
-      throw StateError(
-          "Crashlytics#setCrashlyticsCollectionEnabled has been set to 'true', all reports are automatically sent.");
-    }
-
+  Future<bool /*!*/ > checkForUnsentReports() async {
     try {
-      Map<String, dynamic>? data =
+      Map<String, dynamic> data =
           await channel.invokeMapMethod<String, dynamic>(
               'Crashlytics#checkForUnsentReports');
 
-      return data!['unsentReports'];
-    } on PlatformException catch (e, s) {
-      throw platformExceptionToFirebaseException(e, s);
+      return data['unsentReports'];
+    } catch (e, s) {
+      throw convertPlatformException(e, s);
     }
   }
 
@@ -60,8 +54,8 @@ class MethodChannelFirebaseCrashlytics extends FirebaseCrashlyticsPlatform {
   Future<void> crash() async {
     try {
       await channel.invokeMethod<void>('Crashlytics#crash');
-    } on PlatformException catch (e, s) {
-      throw platformExceptionToFirebaseException(e, s);
+    } catch (e, s) {
+      throw convertPlatformException(e, s);
     }
   }
 
@@ -69,30 +63,30 @@ class MethodChannelFirebaseCrashlytics extends FirebaseCrashlyticsPlatform {
   Future<void> deleteUnsentReports() async {
     try {
       await channel.invokeMethod<void>('Crashlytics#deleteUnsentReports');
-    } on PlatformException catch (e, s) {
-      throw platformExceptionToFirebaseException(e, s);
+    } catch (e, s) {
+      throw convertPlatformException(e, s);
     }
   }
 
   @override
-  Future<bool> didCrashOnPreviousExecution() async {
+  Future<bool /*!*/ > didCrashOnPreviousExecution() async {
     try {
-      Map<String, dynamic>? data =
+      Map<String, dynamic> data =
           await channel.invokeMapMethod<String, dynamic>(
               'Crashlytics#didCrashOnPreviousExecution');
 
-      return data!['didCrashOnPreviousExecution'];
-    } on PlatformException catch (e, s) {
-      throw platformExceptionToFirebaseException(e, s);
+      return data['didCrashOnPreviousExecution'];
+    } catch (e, s) {
+      throw convertPlatformException(e, s);
     }
   }
 
   @override
   Future<void> recordError({
-    required String exception,
-    required String information,
-    required String reason,
-    List<Map<String, String>>? stackTraceElements,
+    String /*!*/ exception,
+    String /*!*/ information,
+    String /*?*/ reason,
+    List<Map<String, String>> /*?*/ stackTraceElements,
   }) async {
     try {
       await channel
@@ -102,8 +96,8 @@ class MethodChannelFirebaseCrashlytics extends FirebaseCrashlyticsPlatform {
         'reason': reason,
         'stackTraceElements': stackTraceElements ?? [],
       });
-    } on PlatformException catch (e, s) {
-      throw platformExceptionToFirebaseException(e, s);
+    } catch (e, s) {
+      throw convertPlatformException(e, s);
     }
   }
 
@@ -113,8 +107,8 @@ class MethodChannelFirebaseCrashlytics extends FirebaseCrashlyticsPlatform {
       await channel.invokeMethod<void>('Crashlytics#log', <String, dynamic>{
         'message': message,
       });
-    } on PlatformException catch (e, s) {
-      throw platformExceptionToFirebaseException(e, s);
+    } catch (e, s) {
+      throw convertPlatformException(e, s);
     }
   }
 
@@ -122,23 +116,23 @@ class MethodChannelFirebaseCrashlytics extends FirebaseCrashlyticsPlatform {
   Future<void> sendUnsentReports() async {
     try {
       await channel.invokeMethod<void>('Crashlytics#sendUnsentReports');
-    } on PlatformException catch (e, s) {
-      throw platformExceptionToFirebaseException(e, s);
+    } catch (e, s) {
+      throw convertPlatformException(e, s);
     }
   }
 
   @override
   Future<void> setCrashlyticsCollectionEnabled(bool enabled) async {
     try {
-      Map<String, dynamic>? data = await channel
+      Map<String, dynamic> data = await channel
           .invokeMapMethod<String, dynamic>(
               'Crashlytics#setCrashlyticsCollectionEnabled', <String, dynamic>{
         'enabled': enabled,
       });
 
-      _isCrashlyticsCollectionEnabled = data!['isCrashlyticsCollectionEnabled'];
-    } on PlatformException catch (e, s) {
-      throw platformExceptionToFirebaseException(e, s);
+      _isCrashlyticsCollectionEnabled = data['isCrashlyticsCollectionEnabled'];
+    } catch (e, s) {
+      throw convertPlatformException(e, s);
     }
   }
 
@@ -149,8 +143,8 @@ class MethodChannelFirebaseCrashlytics extends FirebaseCrashlyticsPlatform {
           'Crashlytics#setUserIdentifier', <String, dynamic>{
         'identifier': identifier,
       });
-    } on PlatformException catch (e, s) {
-      throw platformExceptionToFirebaseException(e, s);
+    } catch (e, s) {
+      throw convertPlatformException(e, s);
     }
   }
 
@@ -162,8 +156,8 @@ class MethodChannelFirebaseCrashlytics extends FirebaseCrashlyticsPlatform {
         'key': key,
         'value': value,
       });
-    } on PlatformException catch (e, s) {
-      throw platformExceptionToFirebaseException(e, s);
+    } catch (e, s) {
+      throw convertPlatformException(e, s);
     }
   }
 }

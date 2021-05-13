@@ -26,14 +26,16 @@ void main() {
       MethodChannelFirebase.channel
           .setMockMethodCallHandler((MethodCall methodCall) async {
         methodCallLog.add(methodCall);
-
+        print(methodCall);
         switch (methodCall.method) {
           case 'FirebaseApp#delete':
+            return null;
           case 'FirebaseApp#setAutomaticDataCollectionEnabled':
+            return null;
           case 'FirebaseApp#setAutomaticResourceManagementEnabled':
             return null;
           default:
-            throw FallThroughError();
+            throw ("Invalid method called");
         }
       });
 
@@ -104,7 +106,7 @@ void main() {
           return;
         }
 
-        fail('FirebaseException not thrown');
+        fail("FirebaseException not thrown");
       });
 
       test('should resolve if _isDeleted is true', () async {

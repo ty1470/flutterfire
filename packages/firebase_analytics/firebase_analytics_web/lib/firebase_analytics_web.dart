@@ -5,12 +5,12 @@ import 'package:meta/meta.dart';
 
 /// Web implementation for [FirebaseAnalyticsPlatform]
 class FirebaseAnalyticsWeb extends FirebaseAnalyticsPlatform {
-  /// A constructor that allows tests to override the firebase.Analytics object.
-  FirebaseAnalyticsWeb({@visibleForTesting firebase.Analytics? analytics})
-      : _analytics = analytics ?? firebase.analytics();
-
   /// Instance of Analytics from the web plugin.
   final firebase.Analytics _analytics;
+
+  /// A constructor that allows tests to override the firebase.Analytics object.
+  FirebaseAnalyticsWeb({@visibleForTesting firebase.Analytics analytics})
+      : _analytics = analytics ?? firebase.analytics();
 
   /// Called by PluginRegistry to register this plugin for Flutter Web
   static void registerWith(Registrar registrar) {
@@ -19,10 +19,10 @@ class FirebaseAnalyticsWeb extends FirebaseAnalyticsPlatform {
 
   @override
   Future<void> logEvent({
-    required String name,
-    Map<String, Object?>? parameters,
+    String name,
+    Map<String, dynamic> parameters,
   }) async {
-    _analytics.logEvent(name, parameters ?? {});
+    _analytics.logEvent(name, parameters);
   }
 
   @override
@@ -31,22 +31,22 @@ class FirebaseAnalyticsWeb extends FirebaseAnalyticsPlatform {
   }
 
   @override
-  Future<void> setUserId(String? id) async {
+  Future<void> setUserId(String id) async {
     _analytics.setUserId(id);
   }
 
   @override
   Future<void> setCurrentScreen({
-    required String? screenName,
-    String? screenClassOverride,
+    String screenName,
+    String screenClassOverride,
   }) async {
     _analytics.setCurrentScreen(screenName);
   }
 
   @override
   Future<void> setUserProperty({
-    required String name,
-    required String? value,
+    String name,
+    String value,
   }) async {
     _analytics.setUserProperties({name: value});
   }

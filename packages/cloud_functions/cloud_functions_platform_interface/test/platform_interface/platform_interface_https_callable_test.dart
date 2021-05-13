@@ -11,14 +11,16 @@ import '../mock.dart';
 
 void main() {
   setupFirebaseFunctionsMocks();
-  TestHttpsCallablePlatform? httpsCallablePlatform;
+
+  TestFirebaseFunctionsPlatform firebaseFunctionsPlatform;
+  TestHttpsCallablePlatform httpsCallablePlatform;
+  FirebaseApp app;
 
   group('$HttpsCallablePlatform()', () {
     setUpAll(() async {
-      FirebaseApp app = await Firebase.initializeApp();
-      TestFirebaseFunctionsPlatform firebaseFunctionsPlatform =
-          TestFirebaseFunctionsPlatform(app);
+      app = await Firebase.initializeApp();
 
+      firebaseFunctionsPlatform = TestFirebaseFunctionsPlatform(app);
       httpsCallablePlatform =
           TestHttpsCallablePlatform(firebaseFunctionsPlatform);
 
@@ -35,10 +37,9 @@ void main() {
       expect(httpsCallablePlatform, isA<PlatformInterface>());
     });
 
-    test('throws Unimplemented if called', () {
+    test('throws if call()', () {
       try {
-        httpsCallablePlatform!.call();
-        // ignore: avoid_catching_errors, acceptable as UnimplementedError usage is correct
+        httpsCallablePlatform.call();
       } on UnimplementedError catch (e) {
         expect(e.message, equals('call() is not implemented'));
         return;
@@ -50,9 +51,12 @@ void main() {
 
 class TestHttpsCallablePlatform extends HttpsCallablePlatform {
   TestHttpsCallablePlatform(FirebaseFunctionsPlatform functions)
-      : super(functions, null, 'function_name', HttpsCallableOptions());
+      : super(functions, 'test_region', '', HttpsCallableOptions());
 }
 
 class TestFirebaseFunctionsPlatform extends FirebaseFunctionsPlatform {
   TestFirebaseFunctionsPlatform(FirebaseApp app) : super(app, 'test_region');
+  FirebaseFunctionsPlatform testDelegateFor({FirebaseApp app}) {
+    return this.delegateFor();
+  }
 }

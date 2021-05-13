@@ -31,7 +31,7 @@ void runTaskTests() {
         task = null;
       });
 
-      Future<void> _testPauseTask(String type) async {
+      final _testPauseTask = (String type) async {
         List<TaskSnapshot> snapshots = [];
         FirebaseException streamError;
         expect(task.snapshot.state, TaskState.running);
@@ -45,7 +45,7 @@ void runTaskTests() {
         // TODO(Salakar): Known issue with iOS SDK where pausing immediately will cause an 'unknown' error.
         if (defaultTargetPlatform == TargetPlatform.iOS) {
           await task.snapshotEvents.first;
-          await Future.delayed(const Duration(milliseconds: 750));
+          await Future.delayed(Duration(milliseconds: 750));
         }
 
         // TODO(Salakar): Known issue with iOS where pausing/resuming doesn't immediately return as paused/resumed 'true'.
@@ -77,7 +77,7 @@ void runTaskTests() {
               anyElement(predicate<TaskSnapshot>((TaskSnapshot element) =>
                   element.state == TaskState.running)));
         }
-      }
+      };
 
       test('successfully pauses and resumes a download task', () async {
         file = await createFile('ok.jpeg');
@@ -162,7 +162,7 @@ void runTaskTests() {
     group('cancel()', () {
       /*late*/ Task /*!*/ task;
 
-      Future<void> _testCancelTask() async {
+      final _testCancelTask = () async {
         List<TaskSnapshot> snapshots = [];
         FirebaseException streamError;
         expect(task.snapshot.state, TaskState.running);
@@ -194,7 +194,7 @@ void runTaskTests() {
         expect(
             snapshots.every((snapshot) => snapshot.state == TaskState.running),
             isTrue);
-      }
+      };
 
       test('successfully cancels download task', () async {
         file = await createFile('ok.jpeg');

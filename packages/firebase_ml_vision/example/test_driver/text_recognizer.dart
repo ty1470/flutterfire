@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart=2.9
-
 part of 'firebase_ml_vision.dart';
 
 void textRecognizerTests() {
@@ -43,7 +41,7 @@ void textRecognizerTests() {
 
     test('processImage with specified options', () async {
       final languageHints = ['en', 'ru'];
-      const textModelType = CloudTextModelType.dense;
+      final textModelType = CloudTextModelType.dense;
 
       final options = CloudTextRecognizerOptions(
           hintedLanguages: languageHints, textModelType: textModelType);
@@ -54,7 +52,7 @@ void textRecognizerTests() {
 
       expect(text.text, 'TEXT\n');
 
-      await recognizer.close();
+      recognizer.close();
     });
   });
 }

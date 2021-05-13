@@ -2,8 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-// @dart=2.9
-
 import 'package:drive/drive.dart' as drive;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,11 +20,12 @@ void testsMain() {
     group('checkForUnsentReports', () {
       test('should throw if automatic crash report is enabled', () async {
         await crashlytics.setCrashlyticsCollectionEnabled(true);
-
-        await expectLater(
-          crashlytics.checkForUnsentReports,
-          throwsA(isA<StateError>()),
-        );
+        try {
+          await crashlytics.checkForUnsentReports();
+          fail("Error did not throw");
+        } catch (e) {
+          print(e);
+        }
       });
 
       test('checks device cache for unsent crashlytics reports', () async {
@@ -72,6 +71,10 @@ void testsMain() {
     });
 
     group('log', () {
+      test('should throw if message is null', () async {
+        expect(() => crashlytics.log(null), throwsAssertionError);
+      });
+
       // This is currently only testing that we can log without crashing.
       test('accepts any value', () async {
         await crashlytics.log('flutter');
@@ -86,6 +89,11 @@ void testsMain() {
     });
 
     group('setCrashlyticsCollectionEnabled', () {
+      test('should throw if null', () async {
+        expect(() => crashlytics.setCrashlyticsCollectionEnabled(null),
+            throwsAssertionError);
+      });
+
       // This is currently only testing that we can send unsent reports without crashing.
       test('should update to true', () async {
         await crashlytics.setCrashlyticsCollectionEnabled(true);
@@ -98,6 +106,10 @@ void testsMain() {
     });
 
     group('setUserIdentifier', () {
+      test('should throw if null', () async {
+        expect(() => crashlytics.setUserIdentifier(null), throwsAssertionError);
+      });
+
       // This is currently only testing that we can log errors without crashing.
       test('should update', () async {
         await crashlytics.setUserIdentifier('foo');

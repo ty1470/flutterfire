@@ -27,7 +27,7 @@ class QuerySnapshotPlatform extends PlatformInterface {
   /// This is used by the app-facing [QuerySnapshot] to ensure that
   /// the object in which it's going to delegate calls has been
   /// constructed properly.
-  static void verifyExtends(QuerySnapshotPlatform instance) {
+  static verifyExtends(QuerySnapshotPlatform instance) {
     PlatformInterface.verifyToken(instance, _token);
   }
 

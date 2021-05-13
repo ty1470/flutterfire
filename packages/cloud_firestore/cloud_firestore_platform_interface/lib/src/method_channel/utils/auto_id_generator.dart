@@ -1,7 +1,6 @@
 // Copyright 2017, the Chromium project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
-
 import 'dart:math';
 
 /// Utility class for generating Firebase child node keys.
@@ -24,7 +23,7 @@ class AutoIdGenerator {
   /// Automatically Generates a random new Id
   static String autoId() {
     final StringBuffer stringBuffer = StringBuffer();
-    const int maxRandom = _AUTO_ID_ALPHABET.length;
+    final int maxRandom = _AUTO_ID_ALPHABET.length;
 
     for (int i = 0; i < _AUTO_ID_LENGTH; ++i) {
       stringBuffer.write(_AUTO_ID_ALPHABET[_random.nextInt(maxRandom)]);

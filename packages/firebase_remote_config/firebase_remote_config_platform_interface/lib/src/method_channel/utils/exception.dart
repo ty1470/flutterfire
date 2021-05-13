@@ -1,5 +1,3 @@
-// @dart=2.9
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 
@@ -7,7 +5,6 @@ import 'package:flutter/services.dart';
 /// it was intentionally caught on the native platform.
 Exception convertPlatformException(Object exception, [StackTrace stackTrace]) {
   if (exception is! Exception || exception is! PlatformException) {
-    // ignore: only_throw_errors
     throw exception;
   }
 

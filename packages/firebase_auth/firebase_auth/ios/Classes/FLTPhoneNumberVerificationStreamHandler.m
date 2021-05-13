@@ -45,6 +45,7 @@
                                                           UIDelegate:nil
                                                           completion:completer];
   } @catch (NSException *exception) {
+    NSLog(@"%@", exception);
     events(@{
       @"name" : @"Auth#phoneVerificationFailed",
       @"error" : @{

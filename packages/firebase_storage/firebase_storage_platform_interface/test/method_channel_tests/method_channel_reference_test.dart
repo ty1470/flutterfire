@@ -3,32 +3,31 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
+import 'dart:io';
 
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage_platform_interface/firebase_storage_platform_interface.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_storage_platform_interface/src/method_channel/method_channel_firebase_storage.dart';
 import 'package:firebase_storage_platform_interface/src/method_channel/method_channel_reference.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_test/flutter_test.dart';
-
 import '../mock.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   setupFirebaseStorageMocks();
 
-  FirebaseStoragePlatform? storage;
-  ReferencePlatform? ref;
+  /*late*/ FirebaseStoragePlatform storage;
+  /*late*/ ReferencePlatform ref;
   final List<MethodCall> log = <MethodCall>[];
-  const String bucketParam = 'bucket-test';
+
   // mock props
   bool mockPlatformExceptionThrown = false;
-  File? kFile;
+  /*late*/ File kFile;
   final kMetadata = SettableMetadata(
       contentLanguage: 'en',
       customMetadata: <String, String>{'activity': 'test'});
-  const kListOptions = ListOptions(maxResults: 20);
+  final kListOptions = ListOptions(maxResults: 20, pageToken: null);
 
   group('$MethodChannelReference', () {
     setUpAll(() async {
@@ -39,12 +38,12 @@ void main() {
         log.add(call);
         if (mockPlatformExceptionThrown) {
           throw PlatformException(
-              code: 'UNKNOWN', message: 'Mock platform exception thrown');
+              code: 'UNKNOWN', message: "Mock platform exception thrown");
         }
 
         switch (call.method) {
           case 'Reference#getDownloadURL':
-            return {'downloadURL': 'https://test-url.com/'};
+            return {};
           case 'Reference#list':
             return {
               'nextPageToken': '',
@@ -57,8 +56,6 @@ void main() {
               'items': ['foo', 'bar'],
               'prefixes': ['foo', 'bar'],
             };
-          case 'Reference#getMetadata':
-            return {};
           case 'Reference#updateMetadata':
             return {};
           case 'Task#startPutFile':
@@ -68,8 +65,8 @@ void main() {
         }
       });
 
-      storage = MethodChannelFirebaseStorage(app: app, bucket: bucketParam);
-      ref = MethodChannelReference(storage!, '/');
+      storage = MethodChannelFirebaseStorage(app: app);
+      ref = MethodChannelReference(storage, '/');
     });
 
     setUp(() async {
@@ -79,14 +76,14 @@ void main() {
 
     group('constructor', () {
       test('should create an instance', () {
-        MethodChannelReference test = MethodChannelReference(storage!, '/');
+        MethodChannelReference test = MethodChannelReference(storage, '/');
         expect(test, isInstanceOf<ReferencePlatform>());
       });
     });
 
     group('delete', () {
       test('should invoke native method with correct args', () async {
-        await ref!.delete();
+        await ref.delete();
 
         // check native method was called
         expect(log, <Matcher>[
@@ -94,10 +91,10 @@ void main() {
             'Reference#delete',
             arguments: <String, dynamic>{
               'appName': '[DEFAULT]',
-              'maxOperationRetryTime': storage!.maxOperationRetryTime,
-              'maxUploadRetryTime': storage!.maxUploadRetryTime,
-              'maxDownloadRetryTime': storage!.maxDownloadRetryTime,
-              'bucket': bucketParam,
+              'maxOperationRetryTime': storage.maxOperationRetryTime,
+              'maxUploadRetryTime': storage.maxUploadRetryTime,
+              'maxDownloadRetryTime': storage.maxDownloadRetryTime,
+              'bucket': null,
               'path': '/',
             },
           ),
@@ -108,15 +105,14 @@ void main() {
           'catch a [PlatformException] error and throws a [FirebaseException] error',
           () async {
         mockPlatformExceptionThrown = true;
-        Function callMethod;
-        callMethod = () => ref!.delete();
+        Function callMethod = () => ref.delete();
         await testExceptionHandling('PLATFORM', callMethod);
       });
     });
 
     group('getDownloadURL', () {
       test('should invoke native method with correct args', () async {
-        await ref!.getDownloadURL();
+        await ref.getDownloadURL();
 
         // check native method was called
         expect(log, <Matcher>[
@@ -124,10 +120,10 @@ void main() {
             'Reference#getDownloadURL',
             arguments: <String, dynamic>{
               'appName': '[DEFAULT]',
-              'maxOperationRetryTime': storage!.maxOperationRetryTime,
-              'maxUploadRetryTime': storage!.maxUploadRetryTime,
-              'maxDownloadRetryTime': storage!.maxDownloadRetryTime,
-              'bucket': bucketParam,
+              'maxOperationRetryTime': storage.maxOperationRetryTime,
+              'maxUploadRetryTime': storage.maxUploadRetryTime,
+              'maxDownloadRetryTime': storage.maxDownloadRetryTime,
+              'bucket': null,
               'path': '/',
             },
           ),
@@ -138,15 +134,14 @@ void main() {
           'catch a [PlatformException] error and throws a [FirebaseException] error',
           () async {
         mockPlatformExceptionThrown = true;
-        Function callMethod;
-        callMethod = () => ref!.getDownloadURL();
+        Function callMethod = () => ref.getDownloadURL();
         await testExceptionHandling('PLATFORM', callMethod);
       });
     });
 
     group('getMetadata', () {
       test('should invoke native method with correct args', () async {
-        await ref!.getMetadata();
+        await ref.getMetadata();
 
         // check native method was called
         expect(log, <Matcher>[
@@ -154,10 +149,10 @@ void main() {
             'Reference#getMetadata',
             arguments: <String, dynamic>{
               'appName': '[DEFAULT]',
-              'maxOperationRetryTime': storage!.maxOperationRetryTime,
-              'maxUploadRetryTime': storage!.maxUploadRetryTime,
-              'maxDownloadRetryTime': storage!.maxDownloadRetryTime,
-              'bucket': bucketParam,
+              'maxOperationRetryTime': storage.maxOperationRetryTime,
+              'maxUploadRetryTime': storage.maxUploadRetryTime,
+              'maxDownloadRetryTime': storage.maxDownloadRetryTime,
+              'bucket': null,
               'path': '/',
             },
           ),
@@ -168,15 +163,14 @@ void main() {
           'catch a [PlatformException] error and throws a [FirebaseStorageException] error',
           () async {
         mockPlatformExceptionThrown = true;
-        Function callMethod;
-        callMethod = () => ref!.getMetadata();
+        Function callMethod = () => ref.getMetadata();
         await testExceptionHandling('PLATFORM', callMethod);
       });
     });
 
     group('list', () {
       test('should invoke native method with correct args', () async {
-        await ref!.list(kListOptions);
+        await ref.list(kListOptions);
 
         // check native method was called
         expect(log, <Matcher>[
@@ -184,10 +178,10 @@ void main() {
             'Reference#list',
             arguments: <String, dynamic>{
               'appName': '[DEFAULT]',
-              'maxOperationRetryTime': storage!.maxOperationRetryTime,
-              'maxUploadRetryTime': storage!.maxUploadRetryTime,
-              'maxDownloadRetryTime': storage!.maxDownloadRetryTime,
-              'bucket': bucketParam,
+              'maxOperationRetryTime': storage.maxOperationRetryTime,
+              'maxUploadRetryTime': storage.maxUploadRetryTime,
+              'maxDownloadRetryTime': storage.maxDownloadRetryTime,
+              'bucket': null,
               'path': '/',
               'options': <String, dynamic>{
                 'maxResults': 20,
@@ -202,15 +196,14 @@ void main() {
           'catch a [PlatformException] error and throws a [FirebaseStorageException] error',
           () async {
         mockPlatformExceptionThrown = true;
-        Function callMethod;
-        callMethod = () => ref!.list(kListOptions);
+        Function callMethod = () => ref.list(kListOptions);
         await testExceptionHandling('PLATFORM', callMethod);
       });
     });
 
     group('listAll', () {
       test('should invoke native method with correct args', () async {
-        await ref!.listAll();
+        await ref.listAll();
 
         // check native method was called
         expect(log, <Matcher>[
@@ -218,10 +211,10 @@ void main() {
             'Reference#listAll',
             arguments: <String, dynamic>{
               'appName': '[DEFAULT]',
-              'maxOperationRetryTime': storage!.maxOperationRetryTime,
-              'maxUploadRetryTime': storage!.maxUploadRetryTime,
-              'maxDownloadRetryTime': storage!.maxDownloadRetryTime,
-              'bucket': bucketParam,
+              'maxOperationRetryTime': storage.maxOperationRetryTime,
+              'maxUploadRetryTime': storage.maxUploadRetryTime,
+              'maxDownloadRetryTime': storage.maxDownloadRetryTime,
+              'bucket': null,
               'path': '/',
             },
           ),
@@ -232,8 +225,7 @@ void main() {
           'catch a [PlatformException] error and throws a [FirebaseStorageException] error',
           () async {
         mockPlatformExceptionThrown = true;
-        Function callMethod;
-        callMethod = () => ref!.listAll();
+        Function callMethod = () => ref.listAll();
         await testExceptionHandling('PLATFORM', callMethod);
       });
     });
@@ -244,7 +236,7 @@ void main() {
 
       test('should invoke native method with correct args', () async {
         int handle = nextMockHandleId;
-        ref!.putData(data, kMetadata);
+        await ref.putData(data, kMetadata);
 
         // check native method was called
         expect(log, <Matcher>[
@@ -252,10 +244,10 @@ void main() {
             'Task#startPutData',
             arguments: <String, dynamic>{
               'appName': '[DEFAULT]',
-              'maxOperationRetryTime': storage!.maxOperationRetryTime,
-              'maxUploadRetryTime': storage!.maxUploadRetryTime,
-              'maxDownloadRetryTime': storage!.maxDownloadRetryTime,
-              'bucket': bucketParam,
+              'maxOperationRetryTime': storage.maxOperationRetryTime,
+              'maxUploadRetryTime': storage.maxUploadRetryTime,
+              'maxDownloadRetryTime': storage.maxDownloadRetryTime,
+              'bucket': null,
               'path': '/',
               'handle': handle,
               'data': list,
@@ -278,14 +270,14 @@ void main() {
       ByteBuffer buffer = Uint8List.fromList(list).buffer;
 
       test('should throw [UnimplementedError]', () async {
-        expect(() => ref!.putBlob(buffer, kMetadata), throwsUnimplementedError);
+        expect(() => ref.putBlob(buffer, kMetadata), throwsUnimplementedError);
       });
     });
 
     group('putFile', () {
       test('should invoke native method with correct args', () async {
         int handle = nextMockHandleId;
-        ref!.putFile(kFile!, kMetadata);
+        await ref.putFile(kFile, kMetadata);
 
         // check native method was called
         expect(log, <Matcher>[
@@ -293,13 +285,13 @@ void main() {
             'Task#startPutFile',
             arguments: <String, dynamic>{
               'appName': '[DEFAULT]',
-              'maxOperationRetryTime': storage!.maxOperationRetryTime,
-              'maxUploadRetryTime': storage!.maxUploadRetryTime,
-              'maxDownloadRetryTime': storage!.maxDownloadRetryTime,
-              'bucket': bucketParam,
+              'maxOperationRetryTime': storage.maxOperationRetryTime,
+              'maxUploadRetryTime': storage.maxUploadRetryTime,
+              'maxDownloadRetryTime': storage.maxDownloadRetryTime,
+              'bucket': null,
               'path': '/',
               'handle': handle,
-              'filePath': kFile!.absolute.path,
+              'filePath': kFile.absolute.path,
               'metadata': {
                 'cacheControl': null,
                 'contentDisposition': null,
@@ -316,9 +308,9 @@ void main() {
 
     group('putString', () {
       test('should invoke native method with correct args', () async {
-        const String data = 'foo';
+        final String data = 'foo';
         int handle = nextMockHandleId;
-        ref!.putString(data, PutStringFormat.raw, kMetadata);
+        await ref.putString(data, PutStringFormat.raw, kMetadata);
 
         // check native method was called
         expect(log, <Matcher>[
@@ -326,10 +318,10 @@ void main() {
             'Task#startPutString',
             arguments: <String, dynamic>{
               'appName': '[DEFAULT]',
-              'maxOperationRetryTime': storage!.maxOperationRetryTime,
-              'maxUploadRetryTime': storage!.maxUploadRetryTime,
-              'maxDownloadRetryTime': storage!.maxDownloadRetryTime,
-              'bucket': bucketParam,
+              'maxOperationRetryTime': storage.maxOperationRetryTime,
+              'maxUploadRetryTime': storage.maxUploadRetryTime,
+              'maxDownloadRetryTime': storage.maxDownloadRetryTime,
+              'bucket': null,
               'path': '/',
               'handle': handle,
               'data': data,
@@ -350,7 +342,7 @@ void main() {
 
     group('updateMetadata', () {
       test('should update successfully', () async {
-        final fullMetadata = await ref!.updateMetadata(kMetadata);
+        final fullMetadata = await ref.updateMetadata(kMetadata);
         expect(fullMetadata, isInstanceOf<FullMetadata>());
       });
 
@@ -358,8 +350,7 @@ void main() {
           'catch a [PlatformException] error and throws a [FirebaseException] error',
           () async {
         mockPlatformExceptionThrown = true;
-        Function callMethod;
-        callMethod = () => ref!.updateMetadata(kMetadata);
+        Function callMethod = () => ref.updateMetadata(kMetadata);
         await testExceptionHandling('PLATFORM', callMethod);
       });
     });
@@ -367,7 +358,7 @@ void main() {
     group('writeToFile', () {
       test('should invoke native method with correct args', () async {
         int handle = nextMockHandleId;
-        ref!.writeToFile(kFile!);
+        await ref.writeToFile(kFile);
 
         // check native method was called
         expect(log, <Matcher>[
@@ -375,13 +366,13 @@ void main() {
             'Task#writeToFile',
             arguments: <String, dynamic>{
               'appName': '[DEFAULT]',
-              'maxOperationRetryTime': storage!.maxOperationRetryTime,
-              'maxUploadRetryTime': storage!.maxUploadRetryTime,
-              'maxDownloadRetryTime': storage!.maxDownloadRetryTime,
-              'bucket': bucketParam,
+              'maxOperationRetryTime': storage.maxOperationRetryTime,
+              'maxUploadRetryTime': storage.maxUploadRetryTime,
+              'maxDownloadRetryTime': storage.maxDownloadRetryTime,
+              'bucket': null,
               'path': '/',
               'handle': handle,
-              'filePath': kFile!.path,
+              'filePath': kFile.path,
             },
           ),
         ]);

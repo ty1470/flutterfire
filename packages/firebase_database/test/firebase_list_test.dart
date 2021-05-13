@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart=2.9
-
 import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
@@ -52,13 +50,6 @@ void main() {
         onChildChanged: completeWithChange,
         onChildMoved: completeWithMove,
       );
-    });
-
-    tearDown(() {
-      onChildAddedStreamController.close();
-      onChildRemovedStreamController.close();
-      onChildChangedStreamController.close();
-      onChildMovedStreamController.close();
     });
 
     Future<ListChange> resetCompleterOnCallback() async {
@@ -217,11 +208,9 @@ class ListChange {
   final DataSnapshot snapshot;
 
   @override
-  // ignore: no_runtimetype_tostring
   String toString() => '$runtimeType[$index, $index2, $snapshot]';
 
   @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object o) {
     return o is ListChange &&
         index == o.index &&
@@ -230,7 +219,6 @@ class ListChange {
   }
 
   @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => index;
 }
 
@@ -244,11 +232,9 @@ class MockEvent implements Event {
   final DataSnapshot snapshot;
 
   @override
-  // ignore: no_runtimetype_tostring
   String toString() => '$runtimeType[$previousSiblingKey, $snapshot]';
 
   @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object o) {
     return o is MockEvent &&
         previousSiblingKey == o.previousSiblingKey &&
@@ -256,7 +242,6 @@ class MockEvent implements Event {
   }
 
   @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => previousSiblingKey.hashCode;
 }
 
@@ -270,16 +255,13 @@ class MockDataSnapshot implements DataSnapshot {
   final dynamic value;
 
   @override
-  // ignore: no_runtimetype_tostring
   String toString() => '$runtimeType[$key, $value]';
 
   @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object o) {
     return o is MockDataSnapshot && key == o.key && value == o.value;
   }
 
   @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => key.hashCode;
 }

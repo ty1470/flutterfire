@@ -8,6 +8,8 @@ part of firebase_core;
 ///
 /// You can get an instance by calling [Firebase.app()].
 class FirebaseApp {
+  FirebaseAppPlatform _delegate;
+
   /// A [FirebaseApp] instance can only be accessed from a call to `app()` on
   /// [FirebaseCore].
   ///
@@ -16,8 +18,6 @@ class FirebaseApp {
   FirebaseApp._(this._delegate) {
     FirebaseAppPlatform.verifyExtends(_delegate);
   }
-
-  final FirebaseAppPlatform _delegate;
 
   /// Deletes this app and frees up system resources.
   ///
@@ -55,16 +55,14 @@ class FirebaseApp {
   }
 
   @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
+  bool operator ==(dynamic other) {
     if (identical(this, other)) return true;
     if (other is! FirebaseApp) return false;
     return other.name == name && other.options == options;
   }
 
   @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => hashValues(name, options);
+  int get hashCode => hash2(name, options);
 
   @override
   String toString() => '$FirebaseApp($name)';

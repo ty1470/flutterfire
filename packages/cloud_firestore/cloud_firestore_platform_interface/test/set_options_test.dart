@@ -28,11 +28,11 @@ void main() {
       expect(
           SetOptions(mergeFields: [
             'foo.bar',
-            FieldPath(const ['foo', 'bar', 'baz'])
+            FieldPath(['foo', 'bar', 'baz'])
           ]).mergeFields,
           equals([
-            FieldPath(const ['foo', 'bar']),
-            FieldPath(const ['foo', 'bar', 'baz']),
+            FieldPath(['foo', 'bar']),
+            FieldPath(['foo', 'bar', 'baz']),
           ]));
     });
   });

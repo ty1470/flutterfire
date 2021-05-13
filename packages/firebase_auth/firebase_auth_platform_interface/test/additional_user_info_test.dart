@@ -6,13 +6,13 @@ import 'package:firebase_auth_platform_interface/firebase_auth_platform_interfac
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  const bool kMockIsNewUser = true;
-  const String kMockDisplayName = 'test-name';
+  final bool kMockIsNewUser = true;
+  final String kMockDisplayName = 'test-name';
   final Map<String, dynamic> kMockProfile = <String, dynamic>{
     'displayName': kMockDisplayName
   };
-  const String kMockProviderId = 'password';
-  const String kMockUsername = 'username';
+  final String kMockProviderId = 'password';
+  final String kMockUsername = 'username';
 
   group('$AdditionalUserInfo', () {
     AdditionalUserInfo additionalUserInfo = AdditionalUserInfo(
@@ -39,6 +39,19 @@ void main() {
             result,
             equals(
                 '$AdditionalUserInfo(isNewUser: $kMockIsNewUser, profile: ${kMockProfile.toString()}, providerId: $kMockProviderId, username: $kMockUsername)'));
+      });
+
+      test('returns expected string when profile is null', () {
+        AdditionalUserInfo additionalUserInfo = AdditionalUserInfo(
+            isNewUser: kMockIsNewUser,
+            profile: null,
+            providerId: kMockProviderId,
+            username: kMockUsername);
+
+        expect(
+            additionalUserInfo.toString(),
+            equals(
+                '$AdditionalUserInfo(isNewUser: $kMockIsNewUser, profile: null, providerId: $kMockProviderId, username: $kMockUsername)'));
       });
     });
   });

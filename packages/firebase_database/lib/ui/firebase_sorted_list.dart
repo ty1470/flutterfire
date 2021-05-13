@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart=2.9
-
 import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
@@ -21,9 +19,7 @@ import 'utils/stream_subscriber_mixin.dart';
 // sorted. See example here:
 // https://github.com/firebase/FirebaseUI-iOS/blob/master/FirebaseDatabaseUI/FUISortedArray.m
 class FirebaseSortedList extends ListBase<DataSnapshot>
-    with
-        // ignore: prefer_mixin
-        StreamSubscriberMixin<Event> {
+    with StreamSubscriberMixin<Event> {
   FirebaseSortedList({
     @required this.query,
     @required this.comparator,
@@ -32,8 +28,9 @@ class FirebaseSortedList extends ListBase<DataSnapshot>
     this.onChildChanged,
     this.onValue,
     this.onError,
-  })  : assert(query != null),
-        assert(comparator != null) {
+  }) {
+    assert(query != null);
+    assert(comparator != null);
     listen(query.onChildAdded, _onChildAdded, onError: _onError);
     listen(query.onChildRemoved, _onChildRemoved, onError: _onError);
     listen(query.onChildChanged, _onChildChanged, onError: _onError);
@@ -69,7 +66,7 @@ class FirebaseSortedList extends ListBase<DataSnapshot>
 
   @override
   set length(int value) {
-    throw UnsupportedError('List cannot be modified.');
+    throw UnsupportedError("List cannot be modified.");
   }
 
   @override
@@ -77,7 +74,7 @@ class FirebaseSortedList extends ListBase<DataSnapshot>
 
   @override
   void operator []=(int index, DataSnapshot value) {
-    throw UnsupportedError('List cannot be modified.');
+    throw UnsupportedError("List cannot be modified.");
   }
 
   @override

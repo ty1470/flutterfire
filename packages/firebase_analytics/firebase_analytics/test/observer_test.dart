@@ -17,8 +17,8 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('FirebaseAnalyticsObserver', () {
-    late MockFirebaseAnalytics analytics;
-    late FirebaseAnalyticsObserver observer;
+    FirebaseAnalytics analytics;
+    FirebaseAnalyticsObserver observer;
     final List<String> printLog = <String>[];
 
     void overridePrint(void Function() func) {
@@ -116,11 +116,12 @@ void main() {
     });
 
     test('runs onError', () async {
-      PlatformException? passedException;
+      PlatformException passedException;
 
-      void handleError(PlatformException error) {
+      final void Function(PlatformException error) handleError =
+          (PlatformException error) {
         passedException = error;
-      }
+      };
 
       observer = FirebaseAnalyticsObserver(
         analytics: analytics,
@@ -145,24 +146,6 @@ void main() {
   });
 }
 
-class MockFirebaseAnalytics extends Mock implements FirebaseAnalytics {
-  @override
-  Future<void> setCurrentScreen(
-      {required String? screenName, String? screenClassOverride = 'Flutter'}) {
-    return super.noSuchMethod(
-      Invocation.method(#setCurrentScreen, [],
-          {#screenName: screenName, #screenClassOverride: screenClassOverride}),
-      returnValue: Future.value(),
-      returnValueForMissingStub: Future.value(),
-    );
-  }
-}
+class MockFirebaseAnalytics extends Mock implements FirebaseAnalytics {}
 
-class MockPageRoute extends Mock implements PageRoute<dynamic> {
-  @override
-  RouteSettings get settings => super.noSuchMethod(
-        Invocation.getter(#settings),
-        returnValue: const RouteSettings(),
-        returnValueForMissingStub: const RouteSettings(),
-      );
-}
+class MockPageRoute extends Mock implements PageRoute<dynamic> {}

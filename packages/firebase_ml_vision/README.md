@@ -57,20 +57,13 @@ You may also need to update your app's deployment target to 9.0 using Xcode. Oth
 compilation errors.
 
 If you're using one of the on-device APIs, include the corresponding ML Kit library model in your
-`Podfile` as indicated below. Then run `pod update` in a terminal within the same directory as your `Podfile`.
+`Podfile`. Then run `pod update` in a terminal within the same directory as your `Podfile`.
 
-```ruby
-# ...
-target 'Runner' do
-  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-  # ...
-  # Include any of the following for the APIs you are using:
-  pod 'Firebase/MLVisionBarcodeModel'
-  pod 'Firebase/MLVisionFaceModel'
-  pod 'Firebase/MLVisionLabelModel'
-  pod 'Firebase/MLVisionTextModel'
-  # ...
-end
+```
+pod 'Firebase/MLVisionBarcodeModel'
+pod 'Firebase/MLVisionFaceModel'
+pod 'Firebase/MLVisionLabelModel'
+pod 'Firebase/MLVisionTextModel'
 ```
 
 ## Using an ML Vision Detector

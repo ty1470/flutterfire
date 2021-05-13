@@ -17,9 +17,11 @@ final otherMetadata = SettableMetadata(
 );
 
 void main() {
+  print('(Check example/test_driver for integration tests!)');
+
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  SettableMetadataCache? cache;
+  /*late*/ SettableMetadataCache cache;
 
   setUp(() {
     cache = SettableMetadataCache();
@@ -30,11 +32,11 @@ void main() {
   group('store()', () {
     group('overwrite = false', () {
       setUp(() {
-        cache!.store(someMetadata);
+        cache.store(someMetadata);
       });
 
-      test("Merges metadata without overwriting what's already set", () {
-        final setMetadata = cache!.store(otherMetadata);
+      test('Merges metadata without overwriting what\'s already set', () {
+        final setMetadata = cache.store(otherMetadata);
 
         expect(
             setMetadata.contentLanguage, equals(someMetadata.contentLanguage));
@@ -42,14 +44,14 @@ void main() {
       });
 
       test(
-          "Shallowly merges extendedMetadata without overwriting what's already set",
+          'Shallowly merges extendedMetadata without overwriting what\'s already set',
           () {
         final withCustomMetadata = SettableMetadata(customMetadata: {
           'testing': '456',
           'more-testing': 'yes',
         });
 
-        final setMetadata = cache!.store(withCustomMetadata);
+        final setMetadata = cache.store(withCustomMetadata);
         final customMetadata = setMetadata.customMetadata;
         expect(customMetadata, containsPair('testing', '123'));
         expect(customMetadata, containsPair('more-testing', 'yes'));
@@ -57,7 +59,7 @@ void main() {
       });
 
       test('Storing null returns the current cache', () {
-        final setMetadata = cache!.store(null);
+        final setMetadata = cache.store(null);
 
         expect(
             setMetadata.contentLanguage, equals(someMetadata.contentLanguage));
@@ -66,18 +68,18 @@ void main() {
 
     group('overwrite = true', () {
       setUp(() {
-        cache!.store(someMetadata);
+        cache.store(someMetadata);
       });
 
       test('Rewrites whole contents of cache', () {
-        final setMetadata = cache!.store(otherMetadata, overwrite: true);
+        final setMetadata = cache.store(otherMetadata, overwrite: true);
 
         expect(setMetadata.contentLanguage, isNull);
         expect(setMetadata, equals(otherMetadata));
       });
 
       test('Cache does not become null', () {
-        final setMetadata = cache!.store(null, overwrite: true);
+        final setMetadata = cache.store(null, overwrite: true);
 
         expect(setMetadata, isA<SettableMetadata>());
         expect(setMetadata, isNotNull);

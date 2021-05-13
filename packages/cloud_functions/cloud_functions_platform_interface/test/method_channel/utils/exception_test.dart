@@ -11,7 +11,7 @@ void main() {
   final Map<String, dynamic> testAdditionalData = <String, dynamic>{
     'foo': 'bar',
   };
-  const String testMessage = 'PlatformException Message';
+  final String testMessage = 'PlatformException Message';
   group('catchPlatformException()', () {
     test('should throw any exception', () async {
       AssertionError assertionError = AssertionError();
@@ -20,7 +20,6 @@ void main() {
         await catchPlatformException(assertionError);
       } on FirebaseFunctionsException catch (_) {
         fail('should have thrown the original exception');
-        // ignore: avoid_catching_errors, in this instance we want to do this
       } on AssertionError catch (_) {
         return;
       } catch (e) {
@@ -57,8 +56,7 @@ void main() {
           details: {'additionalData': testAdditionalData});
 
       FirebaseFunctionsException result =
-          platformExceptionToFirebaseFunctionsException(platformException)
-              as FirebaseFunctionsException;
+          platformExceptionToFirebaseFunctionsException(platformException);
       expect(result.code, 'unknown');
       expect(result.message, testMessage);
 
@@ -67,12 +65,11 @@ void main() {
     });
 
     test('details = null', () {
-      PlatformException platformException =
-          PlatformException(code: 'native', message: testMessage);
+      PlatformException platformException = PlatformException(
+          code: 'native', message: testMessage, details: null);
 
       FirebaseFunctionsException result =
-          platformExceptionToFirebaseFunctionsException(platformException)
-              as FirebaseFunctionsException;
+          platformExceptionToFirebaseFunctionsException(platformException);
       expect(result.code, 'unknown');
       expect(result.message, testMessage);
       expect(result.details, isNull);
@@ -85,8 +82,7 @@ void main() {
           details: {'additionalData': null});
 
       FirebaseFunctionsException result =
-          platformExceptionToFirebaseFunctionsException(platformException)
-              as FirebaseFunctionsException;
+          platformExceptionToFirebaseFunctionsException(platformException);
       expect(result.code, 'unknown');
       expect(result.message, testMessage);
       expect(result.details, isNull);

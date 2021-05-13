@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart=2.9
-
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -53,7 +51,7 @@ void main() {
         final FirebaseVisionImageMetadata metadata =
             FirebaseVisionImageMetadata(
           rawFormat: 35,
-          size: const Size(1, 1),
+          size: const Size(1.0, 1.0),
           planeData: <FirebaseVisionImagePlaneMetadata>[
             FirebaseVisionImagePlaneMetadata(
               bytesPerRow: 1000,
@@ -147,12 +145,12 @@ void main() {
         expect(barcode.valueType, BarcodeValueType.unknown);
         // TODO(jackson): Use const Rect when available in minimum Flutter SDK
         // ignore: prefer_const_constructors
-        expect(barcode.boundingBox, Rect.fromLTWH(1, 2, 3, 4));
+        expect(barcode.boundingBox, Rect.fromLTWH(1.0, 2.0, 3.0, 4.0));
         expect(barcode.rawValue, 'hello:raw');
         expect(barcode.displayValue, 'hello:display');
         expect(barcode.cornerPoints, const <Offset>[
-          Offset(5, 6),
-          Offset(7, 8),
+          Offset(5.0, 6.0),
+          Offset(7.0, 8.0),
         ]);
       });
 
@@ -434,8 +432,8 @@ void main() {
         expect(barcode.rawValue, 'potato:raw');
         expect(barcode.displayValue, 'potato:display');
         expect(barcode.cornerPoints, const <Offset>[
-          Offset(17, 18),
-          Offset(19, 20),
+          Offset(17.0, 18.0),
+          Offset(19.0, 20.0),
         ]);
       });
 
@@ -599,6 +597,7 @@ void main() {
           const FaceDetectorOptions(
             enableClassification: true,
             enableLandmarks: true,
+            enableTracking: false,
             enableContours: true,
             minFaceSize: 0.5,
             mode: FaceDetectorMode.accurate,
@@ -635,7 +634,7 @@ void main() {
         final Face face = faces[0];
         // TODO(jackson): Use const Rect when available in minimum Flutter SDK
         // ignore: prefer_const_constructors
-        expect(face.boundingBox, Rect.fromLTWH(0, 1, 2, 3));
+        expect(face.boundingBox, Rect.fromLTWH(0.0, 1.0, 2.0, 3.0));
         expect(face.headEulerAngleY, 4.0);
         expect(face.headEulerAngleZ, 5.0);
         expect(face.leftEyeOpenProbability, 0.4);
@@ -643,7 +642,7 @@ void main() {
         expect(face.smilingProbability, 0.2);
         expect(face.trackingId, 8);
 
-        for (final FaceLandmarkType type in FaceLandmarkType.values) {
+        for (FaceLandmarkType type in FaceLandmarkType.values) {
           expect(face.getLandmark(type).type, type);
         }
 
@@ -920,11 +919,11 @@ void main() {
           TextBlock block = text.blocks[0];
           // TODO(jackson): Use const Rect when available in minimum Flutter SDK
           // ignore: prefer_const_constructors
-          expect(block.boundingBox, Rect.fromLTWH(13, 14, 15, 16));
+          expect(block.boundingBox, Rect.fromLTWH(13.0, 14.0, 15.0, 16.0));
           expect(block.text, 'friend');
           expect(block.cornerPoints, const <Offset>[
-            Offset(17, 18),
-            Offset(19, 20),
+            Offset(17.0, 18.0),
+            Offset(19.0, 20.0),
           ]);
           expect(block.recognizedLanguages, hasLength(2));
           expect(block.recognizedLanguages[0].languageCode, 'ij');
@@ -934,22 +933,22 @@ void main() {
           block = text.blocks[1];
           // TODO(jackson): Use const Rect when available in minimum Flutter SDK
           // ignore: prefer_const_constructors
-          expect(block.boundingBox, Rect.fromLTWH(14, 13, 16, 15));
+          expect(block.boundingBox, Rect.fromLTWH(14.0, 13.0, 16.0, 15.0));
           expect(block.text, 'hello');
           expect(block.cornerPoints, const <Offset>[
-            Offset(18, 17),
-            Offset(20, 19),
+            Offset(18.0, 17.0),
+            Offset(20.0, 19.0),
           ]);
           expect(block.confidence, 0.6);
 
           block = text.blocks[2];
           // TODO(jackson): Use const Rect when available in minimum Flutter SDK
           // ignore: prefer_const_constructors
-          expect(block.boundingBox, Rect.fromLTWH(14, 13, 16, 15));
+          expect(block.boundingBox, Rect.fromLTWH(14.0, 13.0, 16.0, 15.0));
           expect(block.text, 'hey');
           expect(block.cornerPoints, const <Offset>[
-            Offset(18, 17),
-            Offset(20, 19),
+            Offset(18.0, 17.0),
+            Offset(20.0, 19.0),
           ]);
           expect(block.confidence, 1.0);
         });
@@ -965,8 +964,8 @@ void main() {
           expect(line.boundingBox, Rect.fromLTWH(5, 6, 7, 8));
           expect(line.text, 'friend');
           expect(line.cornerPoints, const <Offset>[
-            Offset(9, 10),
-            Offset(11, 12),
+            Offset(9.0, 10.0),
+            Offset(11.0, 12.0),
           ]);
           expect(line.recognizedLanguages, hasLength(2));
           expect(line.recognizedLanguages[0].languageCode, 'ef');
@@ -976,11 +975,11 @@ void main() {
           line = text.blocks[0].lines[1];
           // TODO(jackson): Use const Rect when available in minimum Flutter SDK
           // ignore: prefer_const_constructors
-          expect(line.boundingBox, Rect.fromLTWH(8, 7, 4, 5));
+          expect(line.boundingBox, Rect.fromLTWH(8.0, 7.0, 4.0, 5.0));
           expect(line.text, 'how');
           expect(line.cornerPoints, const <Offset>[
-            Offset(10, 9),
-            Offset(12, 11),
+            Offset(10.0, 9.0),
+            Offset(12.0, 11.0),
           ]);
           expect(line.confidence, 0.4);
         });
@@ -992,11 +991,11 @@ void main() {
 
           TextElement element = text.blocks[0].lines[0].elements[0];
           // ignore: prefer_const_constructors
-          expect(element.boundingBox, Rect.fromLTWH(1, 2, 3, 4));
+          expect(element.boundingBox, Rect.fromLTWH(1.0, 2.0, 3.0, 4.0));
           expect(element.text, 'hello');
           expect(element.cornerPoints, const <Offset>[
-            Offset(5, 6),
-            Offset(7, 8),
+            Offset(5.0, 6.0),
+            Offset(7.0, 8.0),
           ]);
           expect(element.recognizedLanguages, hasLength(2));
           expect(element.recognizedLanguages[0].languageCode, 'ab');
@@ -1006,11 +1005,11 @@ void main() {
           element = text.blocks[0].lines[0].elements[1];
           // TODO(jackson): Use const Rect when available in minimum Flutter SDK
           // ignore: prefer_const_constructors
-          expect(element.boundingBox, Rect.fromLTWH(4, 3, 2, 1));
+          expect(element.boundingBox, Rect.fromLTWH(4.0, 3.0, 2.0, 1.0));
           expect(element.text, 'my');
           expect(element.cornerPoints, const <Offset>[
-            Offset(6, 5),
-            Offset(8, 7),
+            Offset(6.0, 5.0),
+            Offset(8.0, 7.0),
           ]);
           expect(element.confidence, 0.2);
         });
@@ -1193,11 +1192,11 @@ void main() {
           TextBlock block = text.blocks[0];
           // TODO(jackson): Use const Rect when available in minimum Flutter SDK
           // ignore: prefer_const_constructors
-          expect(block.boundingBox, Rect.fromLTWH(13, 14, 15, 16));
+          expect(block.boundingBox, Rect.fromLTWH(13.0, 14.0, 15.0, 16.0));
           expect(block.text, 'friend');
           expect(block.cornerPoints, const <Offset>[
-            Offset(17, 18),
-            Offset(19, 20),
+            Offset(17.0, 18.0),
+            Offset(19.0, 20.0),
           ]);
           expect(block.recognizedLanguages, hasLength(2));
           expect(block.recognizedLanguages[0].languageCode, 'ij');
@@ -1207,11 +1206,11 @@ void main() {
           block = text.blocks[1];
           // TODO(jackson): Use const Rect when available in minimum Flutter SDK
           // ignore: prefer_const_constructors
-          expect(block.boundingBox, Rect.fromLTWH(14, 13, 16, 15));
+          expect(block.boundingBox, Rect.fromLTWH(14.0, 13.0, 16.0, 15.0));
           expect(block.text, 'hello');
           expect(block.cornerPoints, const <Offset>[
-            Offset(18, 17),
-            Offset(20, 19),
+            Offset(18.0, 17.0),
+            Offset(20.0, 19.0),
           ]);
           expect(block.confidence, 0.6);
         });
@@ -1227,8 +1226,8 @@ void main() {
           expect(line.boundingBox, Rect.fromLTWH(5, 6, 7, 8));
           expect(line.text, 'friend');
           expect(line.cornerPoints, const <Offset>[
-            Offset(9, 10),
-            Offset(11, 12),
+            Offset(9.0, 10.0),
+            Offset(11.0, 12.0),
           ]);
           expect(line.recognizedLanguages, hasLength(2));
           expect(line.recognizedLanguages[0].languageCode, 'ef');
@@ -1238,11 +1237,11 @@ void main() {
           line = text.blocks[0].lines[1];
           // TODO(jackson): Use const Rect when available in minimum Flutter SDK
           // ignore: prefer_const_constructors
-          expect(line.boundingBox, Rect.fromLTWH(8, 7, 4, 5));
+          expect(line.boundingBox, Rect.fromLTWH(8.0, 7.0, 4.0, 5.0));
           expect(line.text, 'how');
           expect(line.cornerPoints, const <Offset>[
-            Offset(10, 9),
-            Offset(12, 11),
+            Offset(10.0, 9.0),
+            Offset(12.0, 11.0),
           ]);
           expect(line.confidence, 0.4);
         });
@@ -1255,11 +1254,11 @@ void main() {
           TextElement element = text.blocks[0].lines[0].elements[0];
           // TODO(jackson): Use const Rect when available in minimum Flutter SDK
           // ignore: prefer_const_constructors
-          expect(element.boundingBox, Rect.fromLTWH(1, 2, 3, 4));
+          expect(element.boundingBox, Rect.fromLTWH(1.0, 2.0, 3.0, 4.0));
           expect(element.text, 'hello');
           expect(element.cornerPoints, const <Offset>[
-            Offset(5, 6),
-            Offset(7, 8),
+            Offset(5.0, 6.0),
+            Offset(7.0, 8.0),
           ]);
           expect(element.recognizedLanguages, hasLength(2));
           expect(element.recognizedLanguages[0].languageCode, 'ab');
@@ -1269,11 +1268,11 @@ void main() {
           element = text.blocks[0].lines[0].elements[1];
           // TODO(jackson): Use const Rect when available in minimum Flutter SDK
           // ignore: prefer_const_constructors
-          expect(element.boundingBox, Rect.fromLTWH(4, 3, 2, 1));
+          expect(element.boundingBox, Rect.fromLTWH(4.0, 3.0, 2.0, 1.0));
           expect(element.text, 'my');
           expect(element.cornerPoints, const <Offset>[
-            Offset(6, 5),
-            Offset(8, 7),
+            Offset(6.0, 5.0),
+            Offset(8.0, 7.0),
           ]);
           expect(element.confidence, 0.2);
         });
@@ -1303,10 +1302,8 @@ void main() {
       });
 
       test('processImage with non-default options', () async {
-        const options = CloudTextRecognizerOptions(
-          hintedLanguages: ['en'],
-          textModelType: CloudTextModelType.dense,
-        );
+        final options = CloudTextRecognizerOptions(
+            hintedLanguages: ['en'], textModelType: CloudTextModelType.dense);
 
         final recognizerWithOptions =
             FirebaseVision.instance.cloudTextRecognizer(options);
@@ -1400,17 +1397,17 @@ void main() {
       });
 
       group('throws an exception when native API fails to', () {
-        const errorMessage = 'There is some problem with a call';
+        final ERROR_MESSAGE = "There is some problem with a call";
 
         test('process an image', () async {
           FirebaseVision.channel
               .setMockMethodCallHandler((MethodCall methodCall) async {
-            throw Exception(errorMessage);
+            throw Exception(ERROR_MESSAGE);
           });
           expect(
               recognizer.processImage(image),
               throwsA(isA<PlatformException>().having(
-                  (e) => e.toString(), 'message', contains(errorMessage))));
+                  (e) => e.toString(), 'message', contains(ERROR_MESSAGE))));
         });
 
         test('close', () async {
@@ -1420,18 +1417,15 @@ void main() {
               case 'TextRecognizer#processImage':
                 return returnValue;
               default:
-                throw Exception(errorMessage);
+                throw Exception(ERROR_MESSAGE);
             }
           });
           await recognizer.processImage(image);
 
           expect(
-            recognizer.close(),
-            throwsA(
-              isA<PlatformException>().having(
-                  (e) => e.toString(), 'message', contains(errorMessage)),
-            ),
-          );
+              recognizer.close(),
+              throwsA(isA<PlatformException>().having(
+                  (e) => e.toString(), 'message', contains(ERROR_MESSAGE))));
         });
       });
     });

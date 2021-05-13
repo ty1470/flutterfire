@@ -2,16 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart=2.9
-
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui' show lerpDouble;
 
-import 'package:camera/camera.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -22,11 +20,10 @@ enum AnimationState { search, barcodeNear, barcodeFound, endSearch }
 
 class MaterialBarcodeScanner extends StatefulWidget {
   const MaterialBarcodeScanner({
-    Key key,
     this.validRectangle = const Rectangle(width: 320, height: 144),
     this.frameColor = kShrineScrim,
     this.traceMultiplier = 1.2,
-  }) : super(key: key);
+  });
 
   final Rectangle validRectangle;
   final Color frameColor;
@@ -42,7 +39,7 @@ class _MaterialBarcodeScannerState extends State<MaterialBarcodeScanner>
   AnimationController _animationController;
   String _scannerHint;
   bool _closeWindow = false;
-  XFile _barcodePictureFile;
+  String _barcodePictureFilePath;
   Size _previewSize;
   AnimationState _currentState = AnimationState.search;
   CustomPainter _animationPainter;
@@ -161,7 +158,7 @@ class _MaterialBarcodeScannerState extends State<MaterialBarcodeScanner>
             ? ResolutionPreset.medium
             : ResolutionPreset.low;
 
-    _cameraController = CameraController(camera, preset, enableAudio: false);
+    _cameraController = CameraController(camera, preset);
     await _cameraController.initialize();
     _previewSize = _cameraController.value.previewSize;
     setState(() {});
@@ -171,7 +168,7 @@ class _MaterialBarcodeScannerState extends State<MaterialBarcodeScanner>
     bool isDetecting = false;
     final MediaQueryData data = MediaQuery.of(context);
 
-    await _cameraController.startImageStream((CameraImage image) {
+    _cameraController.startImageStream((CameraImage image) {
       if (isDetecting) {
         return;
       }
@@ -229,7 +226,7 @@ class _MaterialBarcodeScannerState extends State<MaterialBarcodeScanner>
       center.dy + halfHeight,
     );
 
-    for (final Barcode barcode in barcodes) {
+    for (Barcode barcode in barcodes) {
       final Rect intersection = validRect.intersect(barcode.boundingBox);
 
       final bool doesContain = intersection == barcode.boundingBox;
@@ -288,18 +285,21 @@ class _MaterialBarcodeScannerState extends State<MaterialBarcodeScanner>
     final String dirPath = '${extDir.path}/Pictures/barcodePics';
     await Directory(dirPath).create(recursive: true);
 
-    XFile pictureFile;
+    final String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+
+    final String filePath = '$dirPath/$timestamp.jpg';
+
     try {
-      pictureFile = await _cameraController.takePicture();
+      await _cameraController.takePicture(filePath);
     } on CameraException catch (e) {
       print(e);
     }
 
-    await _cameraController.dispose();
+    _cameraController.dispose();
     _cameraController = null;
 
     setState(() {
-      _barcodePictureFile = pictureFile;
+      _barcodePictureFilePath = filePath;
     });
   }
 
@@ -333,7 +333,7 @@ class _MaterialBarcodeScannerState extends State<MaterialBarcodeScanner>
     showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
-        return SizedBox(
+        return Container(
           width: double.infinity,
           height: 368,
           child: Column(
@@ -423,19 +423,17 @@ class _MaterialBarcodeScannerState extends State<MaterialBarcodeScanner>
                           child: ButtonTheme(
                             minWidth: 312,
                             height: 48,
-                            child: ElevatedButton.icon(
+                            child: RaisedButton.icon(
                               onPressed: () => Navigator.of(context).pop(),
-                              style: ElevatedButton.styleFrom(
-                                primary: kShrinePink100,
-                                elevation: 8,
-                                shape: const BeveledRectangleBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(7),
-                                  ),
+                              color: kShrinePink100,
+                              label: const Text('ADD TO CART - \$12.99'),
+                              icon: const Icon(Icons.add_shopping_cart),
+                              elevation: 8.0,
+                              shape: const BeveledRectangleBorder(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(7.0),
                                 ),
                               ),
-                              label: const Text(r'ADD TO CART - $12.99'),
-                              icon: const Icon(Icons.add_shopping_cart),
                             ),
                           ),
                         ),
@@ -455,7 +453,7 @@ class _MaterialBarcodeScannerState extends State<MaterialBarcodeScanner>
     _initCameraAndScanner();
     setState(() {
       _closeWindow = false;
-      _barcodePictureFile = null;
+      _barcodePictureFilePath = null;
       _scannerHint = null;
       _switchAnimationState(AnimationState.search);
     });
@@ -464,14 +462,14 @@ class _MaterialBarcodeScannerState extends State<MaterialBarcodeScanner>
   @override
   Widget build(BuildContext context) {
     Widget background;
-    if (_barcodePictureFile != null) {
+    if (_barcodePictureFilePath != null) {
       background = Container(
         color: Colors.black,
         child: Transform.scale(
           scale: _getImageZoom(MediaQuery.of(context)),
           child: Center(
             child: Image.file(
-              File(_barcodePictureFile.path),
+              File(_barcodePictureFilePath),
               fit: BoxFit.fitWidth,
             ),
           ),
@@ -511,19 +509,19 @@ class _MaterialBarcodeScannerState extends State<MaterialBarcodeScanner>
               top: 0,
               child: Container(
                 height: 56,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: <Color>[Colors.black87, Colors.transparent],
+                    colors: const <Color>[Colors.black87, Colors.transparent],
                   ),
                 ),
               ),
             ),
             Positioned(
-              left: 0,
-              bottom: 0,
-              right: 0,
+              left: 0.0,
+              bottom: 0.0,
+              right: 0.0,
               height: 56,
               child: Container(
                 color: kShrinePink50,
@@ -547,7 +545,7 @@ class _MaterialBarcodeScannerState extends State<MaterialBarcodeScanner>
                 onPressed: () => Navigator.of(context).pop(),
               ),
               backgroundColor: Colors.transparent,
-              elevation: 0,
+              elevation: 0.0,
               actions: <Widget>[
                 IconButton(
                   icon: const Icon(

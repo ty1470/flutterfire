@@ -38,19 +38,21 @@ import io.flutter.plugins.firebase.firestore.streamhandler.QuerySnapshotsStreamH
 import io.flutter.plugins.firebase.firestore.streamhandler.SnapshotsInSyncStreamHandler;
 import io.flutter.plugins.firebase.firestore.streamhandler.TransactionStreamHandler;
 import io.flutter.plugins.firebase.firestore.utils.ExceptionConverter;
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.WeakHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class FlutterFirebaseFirestorePlugin
     implements FlutterFirebasePlugin, MethodCallHandler, FlutterPlugin, ActivityAware {
 
-  protected static final HashMap<String, FirebaseFirestore> firestoreInstanceCache =
-      new HashMap<>();
+  protected static final WeakHashMap<String, WeakReference<FirebaseFirestore>>
+      firestoreInstanceCache = new WeakHashMap<>();
 
   public static final String DEFAULT_ERROR_CODE = "firebase_firestore";
 
@@ -71,9 +73,9 @@ public class FlutterFirebaseFirestorePlugin
 
   protected static FirebaseFirestore getCachedFirebaseFirestoreInstanceForKey(String key) {
     synchronized (firestoreInstanceCache) {
-      FirebaseFirestore existingInstance = firestoreInstanceCache.get(key);
+      WeakReference<FirebaseFirestore> existingInstance = firestoreInstanceCache.get(key);
       if (existingInstance != null) {
-        return existingInstance;
+        return existingInstance.get();
       }
 
       return null;
@@ -83,17 +85,18 @@ public class FlutterFirebaseFirestorePlugin
   protected static void setCachedFirebaseFirestoreInstanceForKey(
       FirebaseFirestore firestore, String key) {
     synchronized (firestoreInstanceCache) {
-      FirebaseFirestore existingInstance = firestoreInstanceCache.get(key);
+      WeakReference<FirebaseFirestore> existingInstance = firestoreInstanceCache.get(key);
       if (existingInstance == null) {
-        firestoreInstanceCache.put(key, firestore);
+        firestoreInstanceCache.put(key, new WeakReference<>(firestore));
       }
     }
   }
 
   private static void destroyCachedFirebaseFirestoreInstanceForKey(String key) {
     synchronized (firestoreInstanceCache) {
-      FirebaseFirestore existingInstance = firestoreInstanceCache.get(key);
+      WeakReference<FirebaseFirestore> existingInstance = firestoreInstanceCache.get(key);
       if (existingInstance != null) {
+        existingInstance.clear();
         firestoreInstanceCache.remove(key);
       }
     }

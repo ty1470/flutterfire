@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart=2.9
-
 part of firebase_database;
 
 enum _EventType {
@@ -71,6 +69,5 @@ class DatabaseError {
   String get details => _data['details'];
 
   @override
-  // ignore: no_runtimetype_tostring
-  String toString() => '$runtimeType($code, $message, $details)';
+  String toString() => "$runtimeType($code, $message, $details)";
 }

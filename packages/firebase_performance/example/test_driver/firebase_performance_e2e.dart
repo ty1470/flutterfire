@@ -2,15 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// @dart=2.9
-
 import 'package:e2e/e2e.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_performance/firebase_performance.dart';
-import 'package:pedantic/pedantic.dart';
 
-Future<void> main() async {
+void main() async {
   E2EWidgetsFlutterBinding.ensureInitialized();
 
   setUpAll(() async {
@@ -19,14 +16,13 @@ Future<void> main() async {
 
   testWidgets('setPerformanceCollectionEnabled', (WidgetTester tester) async {
     FirebasePerformance performance = FirebasePerformance.instance;
-
-    unawaited(performance.setPerformanceCollectionEnabled(true));
+    performance.setPerformanceCollectionEnabled(true);
     expect(
       performance.isPerformanceCollectionEnabled(),
       completion(isTrue),
     );
 
-    unawaited(performance.setPerformanceCollectionEnabled(false));
+    performance.setPerformanceCollectionEnabled(false);
     expect(
       performance.isPerformanceCollectionEnabled(),
       completion(isFalse),
@@ -35,13 +31,13 @@ Future<void> main() async {
 
   testWidgets('test all values', (WidgetTester tester) async {
     FirebasePerformance performance = FirebasePerformance.instance;
-    for (final HttpMethod method in HttpMethod.values) {
+    for (HttpMethod method in HttpMethod.values) {
       final HttpMetric testMetric = performance.newHttpMetric(
         'https://www.google.com/',
         method,
       );
-      unawaited(testMetric.start());
-      unawaited(testMetric.stop());
+      testMetric.start();
+      testMetric.stop();
     }
   });
 

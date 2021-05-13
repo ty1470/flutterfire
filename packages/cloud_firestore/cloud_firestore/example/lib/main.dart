@@ -2,8 +2,6 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-// @dart=2.9
-
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,11 +10,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 /// See https://firebase.flutter.dev/docs/firestore/usage#emulator-usage
 bool USE_FIRESTORE_EMULATOR = false;
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   if (USE_FIRESTORE_EMULATOR) {
-    FirebaseFirestore.instance.settings = const Settings(
+    FirebaseFirestore.instance.settings = Settings(
         host: 'localhost:8080', sslEnabled: false, persistenceEnabled: false);
   }
   runApp(FirestoreExampleApp());
@@ -50,7 +48,7 @@ class FilmList extends StatefulWidget {
 }
 
 class _FilmListState extends State<FilmList> {
-  String _filterOrSort = 'sort_year';
+  String _filterOrSort = "sort_year";
 
   _FilmListState();
 
@@ -59,8 +57,8 @@ class _FilmListState extends State<FilmList> {
     Query query =
         FirebaseFirestore.instance.collection('firestore-example-app');
 
-    Future<void> _onActionSelected(String value) async {
-      if (value == 'batch_reset_likes') {
+    void _onActionSelected(String value) async {
+      if (value == "batch_reset_likes") {
         WriteBatch batch = FirebaseFirestore.instance.batch();
 
         await query.get().then((querySnapshot) async {
@@ -71,7 +69,7 @@ class _FilmListState extends State<FilmList> {
           await batch.commit();
 
           setState(() {
-            _filterOrSort = 'sort_year';
+            _filterOrSort = "sort_year";
           });
         });
       } else {
@@ -82,32 +80,32 @@ class _FilmListState extends State<FilmList> {
     }
 
     switch (_filterOrSort) {
-      case 'sort_year':
+      case "sort_year":
 
         /// Order by the production year. Set [descending] to [false] to reverse the order
         query = query.orderBy('year', descending: true);
         break;
-      case 'sort_likes_desc':
+      case "sort_likes_desc":
 
         /// Order by the number of likes. Set [descending] to [false] to reverse the order
         query = query.orderBy('likes', descending: true);
         break;
-      case 'sort_likes_asc':
+      case "sort_likes_asc":
 
         /// Order by the number of likes. Set [descending] to [false] to reverse the order
-        query = query.orderBy('likes');
+        query = query.orderBy('likes', descending: false);
         break;
-      case 'sort_score':
+      case "sort_score":
 
         /// Order by the score, and return only those which has one great than 90
         query = query.orderBy('score').where('score', isGreaterThan: 90);
         break;
-      case 'filter_genre_scifi':
+      case "filter_genre_scifi":
 
         /// Return the movies which have the following categories
         query = query.where('genre', arrayContainsAny: ['Sci-Fi']);
         break;
-      case 'filter_genre_fantasy':
+      case "filter_genre_fantasy":
 
         /// Return the movies which have the following categories
         query = query.where('genre', arrayContainsAny: ['Fantasy']);
@@ -120,9 +118,9 @@ class _FilmListState extends State<FilmList> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text('Firestore Example: Movies'),
+              Text('Firestore Example: Movies'),
 
-              // This is a example use for 'snapshots in sync'.
+              // This is a example use for "snapshots in sync".
               // The view reflects the time of the last Firestore sync; which happens any time a field is updated.
               StreamBuilder(
                 stream: FirebaseFirestore.instance.snapshotsInSync(),
@@ -142,33 +140,33 @@ class _FilmListState extends State<FilmList> {
               },
               itemBuilder: (BuildContext context) {
                 return [
-                  const PopupMenuItem(
-                    value: 'sort_year',
-                    child: Text('Sort by Year'),
+                  PopupMenuItem(
+                    value: "sort_year",
+                    child: Text("Sort by Year"),
                   ),
-                  const PopupMenuItem(
-                    value: 'sort_score',
-                    child: Text('Sort by Score'),
+                  PopupMenuItem(
+                    value: "sort_score",
+                    child: Text("Sort by Score"),
                   ),
-                  const PopupMenuItem(
-                    value: 'sort_likes_asc',
-                    child: Text('Sort by Likes ascending'),
+                  PopupMenuItem(
+                    value: "sort_likes_asc",
+                    child: Text("Sort by Likes ascending"),
                   ),
-                  const PopupMenuItem(
-                    value: 'sort_likes_desc',
-                    child: Text('Sort by Likes descending'),
+                  PopupMenuItem(
+                    value: "sort_likes_desc",
+                    child: Text("Sort by Likes descending"),
                   ),
-                  const PopupMenuItem(
-                    value: 'filter_genre_fantasy',
-                    child: Text('Filter genre Fantasy'),
+                  PopupMenuItem(
+                    value: "filter_genre_fantasy",
+                    child: Text("Filter genre Fantasy"),
                   ),
-                  const PopupMenuItem(
-                    value: 'filter_genre_scifi',
-                    child: Text('Filter genre Sci-Fi'),
+                  PopupMenuItem(
+                    value: "filter_genre_scifi",
+                    child: Text("Filter genre Sci-Fi"),
                   ),
-                  const PopupMenuItem(
-                    value: 'batch_reset_likes',
-                    child: Text('Reset like counts (WriteBatch)'),
+                  PopupMenuItem(
+                    value: "batch_reset_likes",
+                    child: Text("Reset like counts (WriteBatch)"),
                   ),
                 ];
               },
@@ -179,7 +177,7 @@ class _FilmListState extends State<FilmList> {
           stream: query.snapshots(),
           builder: (context, stream) {
             if (stream.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(child: CircularProgressIndicator());
             }
 
             if (stream.hasError) {
@@ -212,7 +210,7 @@ class Movie extends StatelessWidget {
 
   /// Returns the movie poster.
   Widget get poster {
-    return SizedBox(
+    return Container(
       width: 100,
       child: Center(child: Image.network(movie['poster'])),
     );
@@ -221,7 +219,7 @@ class Movie extends StatelessWidget {
   /// Returns movie details.
   Widget get details {
     return Padding(
-        padding: const EdgeInsets.only(left: 8, right: 8),
+        padding: EdgeInsets.only(left: 8, right: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -238,19 +236,18 @@ class Movie extends StatelessWidget {
 
   /// Return the movie title.
   Widget get title {
-    return Text('${movie['title']} (${movie['year']})',
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold));
+    return Text("${movie['title']} (${movie['year']})",
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold));
   }
 
   /// Returns metadata about the movie.
   Widget get metadata {
     return Padding(
-        padding: const EdgeInsets.only(top: 8),
+        padding: EdgeInsets.only(top: 8),
         child: Row(children: [
           Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: Text('Rated: ${movie['rated']}'),
-          ),
+              child: Text('Rated: ${movie['rated']}'),
+              padding: EdgeInsets.only(right: 8)),
           Text('Runtime: ${movie['runtime']}'),
         ]));
   }
@@ -260,10 +257,10 @@ class Movie extends StatelessWidget {
     List<Widget> items = <Widget>[];
     movie['genre'].forEach((genre) {
       items.add(Padding(
-        padding: const EdgeInsets.only(right: 2),
         child: Chip(
-            label: Text(genre, style: const TextStyle(color: Colors.white)),
+            label: Text(genre, style: TextStyle(color: Colors.white)),
             backgroundColor: Colors.lightBlue),
+        padding: EdgeInsets.only(right: 2),
       ));
     });
     return items;
@@ -272,22 +269,22 @@ class Movie extends StatelessWidget {
   /// Returns all genres.
   Widget get genres {
     return Padding(
-        padding: const EdgeInsets.only(top: 8),
-        child: Wrap(children: genreItems()));
+        padding: EdgeInsets.only(top: 8), child: Wrap(children: genreItems()));
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 4, top: 4),
-      child: Row(
-        children: [poster, Flexible(child: details)],
-      ),
-    );
+        padding: EdgeInsets.only(bottom: 4, top: 4),
+        child: Container(
+          child: Row(
+            children: [poster, Flexible(child: details)],
+          ),
+        ));
   }
 }
 
-/// Displays and manages the movie 'like' count.
+/// Displays and manages the movie "like" count.
 class Likes extends StatefulWidget {
   /// The [DocumentReference] relating to the counter.
   final DocumentReference /*!*/ reference;
@@ -308,20 +305,20 @@ class Likes extends StatefulWidget {
 class _Likes extends State<Likes> {
   int /*!*/ _likes;
 
-  Future<void> _onLike(int current) async {
-    // Increment the 'like' count straight away to show feedback to the user.
+  _onLike(int current) async {
+    // Increment the "like" count straight away to show feedback to the user.
     setState(() {
       _likes = current + 1;
     });
 
     try {
-      // Return and set the updated 'likes' count from the transaction
+      // Return and set the updated "likes" count from the transaction
       int newLikes = await FirebaseFirestore.instance
           .runTransaction<int>((transaction) async {
         DocumentSnapshot txSnapshot = await transaction.get(widget.reference);
 
         if (!txSnapshot.exists) {
-          throw Exception('Document does not exist!');
+          throw Exception("Document does not exist!");
         }
 
         int updatedLikes = (txSnapshot.data()['likes'] ?? 0) + 1;
@@ -334,10 +331,8 @@ class _Likes extends State<Likes> {
         _likes = newLikes;
       });
     } catch (e, s) {
-      //ignore: avoid_print
       print(s);
-      //ignore: avoid_print
-      print('Failed to update likes for document! $e');
+      print("Failed to update likes for document! $e");
 
       // If the transaction fails, revert back to the old count
       setState(() {
@@ -352,12 +347,12 @@ class _Likes extends State<Likes> {
 
     return Row(children: [
       IconButton(
-          icon: const Icon(Icons.favorite),
+          icon: Icon(Icons.favorite),
           iconSize: 20,
           onPressed: () {
             _onLike(currentLikes);
           }),
-      Text('$currentLikes likes'),
+      Text("$currentLikes likes"),
     ]);
   }
 }
