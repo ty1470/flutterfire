@@ -78,8 +78,7 @@ class FirebaseCrashlytics extends FirebasePluginPlatform {
   Future<void> recordError(dynamic exception, StackTrace? stack,
       {dynamic reason,
       Iterable<DiagnosticsNode> information = const [],
-      bool? printDetails,
-      bool fatal = false}) async {
+      bool? printDetails}) async {
     // Use the debug flag if printDetails is not provided
     printDetails ??= kDebugMode;
 
@@ -116,15 +115,16 @@ class FirebaseCrashlytics extends FirebasePluginPlatform {
     final StackTrace stackTrace = stack ?? StackTrace.current;
 
     // Report error.
+    final List<String> stackTraceLines =
+        Trace.format(stackTrace).trimRight().split('\n');
     final List<Map<String, String>> stackTraceElements =
-        getStackTraceElements(stackTrace);
+        getStackTraceElements(stackTraceLines);
 
     return _delegate.recordError(
       exception: exception.toString(),
       reason: reason.toString(),
       information: _information,
       stackTraceElements: stackTraceElements,
-      fatal: fatal,
     );
   }
 
@@ -133,14 +133,11 @@ class FirebaseCrashlytics extends FirebasePluginPlatform {
     FlutterError.dumpErrorToConsole(flutterErrorDetails, forceReport: true);
 
     return recordError(
-      flutterErrorDetails.exceptionAsString(),
-      flutterErrorDetails.stack,
-      reason: flutterErrorDetails.context,
-      information: flutterErrorDetails.informationCollector == null
-          ? []
-          : flutterErrorDetails.informationCollector!(),
-      printDetails: false,
-    );
+        flutterErrorDetails.exceptionAsString(), flutterErrorDetails.stack,
+        reason: flutterErrorDetails.context,
+        information: flutterErrorDetails.informationCollector == null
+            ? []
+            : flutterErrorDetails.informationCollector!());
   }
 
   /// Logs a message that's included in the next fatal or non-fatal report.

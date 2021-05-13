@@ -18,14 +18,14 @@ const _kShouldTestAsyncErrorOnInit = false;
 
 // Toggle this for testing Crashlytics in your app locally.
 const _kTestingCrashlytics = true;
-//ignore: avoid_void_async
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
 
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runZonedGuarded(() {
     runApp(MyApp());
-  }, FirebaseCrashlytics.instance.recordError);
+  }, (error, stackTrace) {
+    FirebaseCrashlytics.instance.recordError(error, stackTrace);
+  });
 }
 
 class MyApp extends StatefulWidget {
@@ -47,6 +47,7 @@ class _MyAppState extends State<MyApp> {
   // Define an async function to initialize FlutterFire
   Future<void> _initializeFlutterFire() async {
     // Wait for Firebase to initialize
+    await Firebase.initializeApp();
 
     if (_kTestingCrashlytics) {
       // Force enable crashlytics collection enabled if we're testing it.
@@ -194,31 +195,11 @@ class _MyAppState extends State<MyApp> {
                           } catch (e, s) {
                             // "reason" will append the word "thrown" in the
                             // Crashlytics console.
-                            await FirebaseCrashlytics.instance.recordError(e, s,
-                                reason: 'as an example of fatal error',
-                                fatal: true);
+                            await FirebaseCrashlytics.instance
+                                .recordError(e, s, reason: 'as an example');
                           }
                         },
-                        child: const Text('Record Fatal Error'),
-                      ),
-                      ElevatedButton(
-                        onPressed: () async {
-                          try {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                              content: Text('Recorded Error  \n'
-                                  'Please crash and reopen to send data to Crashlytics'),
-                              duration: Duration(seconds: 5),
-                            ));
-                            throw Error();
-                          } catch (e, s) {
-                            // "reason" will append the word "thrown" in the
-                            // Crashlytics console.
-                            await FirebaseCrashlytics.instance.recordError(e, s,
-                                reason: 'as an example of non-fatal error');
-                          }
-                        },
-                        child: const Text('Record Non-Fatal Error'),
+                        child: const Text('Record Error'),
                       ),
                     ],
                   ),

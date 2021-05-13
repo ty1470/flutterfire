@@ -110,7 +110,6 @@ abstract class FirebaseCrashlyticsPlatform extends PlatformInterface {
     required String exception,
     required String information,
     required String reason,
-    bool fatal = false,
     List<Map<String, String>>? stackTraceElements,
   }) {
     throw UnimplementedError('recordError() is not implemented');

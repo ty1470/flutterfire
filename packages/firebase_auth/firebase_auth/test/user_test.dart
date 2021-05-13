@@ -273,9 +273,7 @@ void main() {
         when(mockUserPlatform!.updatePhoneNumber(any)).thenAnswer((i) async {});
 
         PhoneAuthCredential phoneAuthCredential = PhoneAuthProvider.credential(
-          verificationId: 'test',
-          smsCode: 'test',
-        );
+            verificationId: 'test', smsCode: 'test') as PhoneAuthCredential;
 
         await auth!.currentUser!.updatePhoneNumber(phoneAuthCredential);
 

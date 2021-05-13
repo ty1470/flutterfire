@@ -7,10 +7,9 @@ import 'dart:async';
 import 'package:firebase_auth_platform_interface/firebase_auth_platform_interface.dart';
 import 'package:firebase_auth_platform_interface/src/method_channel/method_channel_firebase_auth.dart';
 import 'package:firebase_auth_platform_interface/src/method_channel/method_channel_user.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-
+import 'package:firebase_core/firebase_core.dart';
 import '../mock.dart';
 
 void main() {
@@ -966,35 +965,35 @@ void main() {
       });
 
       test('listens to incoming changes', () async {
-        Stream<UserPlatform?> stream =
-            auth.authStateChanges().asBroadcastStream();
-
-        await expectLater(stream, emits(isNull));
-        expect(auth.currentUser, equals(isNull));
-
-        await injectEventChannelResponse('authStateChannel', {'user': user});
-
-        await expectLater(
-          stream,
-          emits(isA<UserPlatform>().having((e) => e.uid, 'uid', kMockUid)),
-        );
-        expect(auth.currentUser!.uid, equals(kMockUid));
-
-        expect(log, isEmpty);
-      });
-
-      test('emits the latest user available', () async {
+        const String testEmail = 'testauthstate@email.com';
         Stream<UserPlatform?> stream = auth.authStateChanges();
+        int call = 0;
+
+        subscription = stream.listen(
+          expectAsync1((UserPlatform? user) {
+            call++;
+            if (call == 1) {
+              expect(user, isA<UserPlatform>());
+              expect(user!.email, isNull);
+            } else if (call == 2) {
+              expect(user!.email, equals(testEmail));
+            } else {
+              fail('Should not have been called');
+            }
+          }, count: 2, reason: 'Stream should only have been called 2 times'),
+        );
 
         await injectEventChannelResponse('authStateChannel', {'user': user});
 
-        await expectLater(
-          stream,
-          emits(isA<UserPlatform>().having((e) => e.uid, 'uid', kMockUid)),
+        final Map<String, dynamic> updatedUser = <String, dynamic>{
+          'email': testEmail,
+        };
+        await injectEventChannelResponse(
+          'authStateChannel',
+          {'user': updatedUser},
         );
 
-        expect(auth.currentUser!.uid, equals(kMockUid));
-        expect(log, isEmpty);
+        expect(log, equals([]));
       });
     });
 
@@ -1011,36 +1010,28 @@ void main() {
       });
 
       test('listens to incoming changes', () async {
-        Stream<UserPlatform?> stream =
-            auth.idTokenChanges().asBroadcastStream();
-
-        await expectLater(stream, emits(isNull));
-        expect(auth.currentUser, equals(isNull));
-
-        await injectEventChannelResponse('idTokenChannel', {'user': user});
-
-        await expectLater(
-          stream,
-          emits(isA<UserPlatform>().having((e) => e.uid, 'uid', kMockUid)),
-        );
-        expect(auth.currentUser!.uid, equals(kMockUid));
-
-        expect(log, isEmpty);
-      });
-
-      test('emits the latest user available', () async {
         Stream<UserPlatform?> stream = auth.idTokenChanges();
+        int call = 0;
+
+        subscription = stream.listen(
+          expectAsync1((UserPlatform? user) {
+            call++;
+            if (call == 1) {
+              expect(user, isNull);
+            } else if (call == 2) {
+              expect(user!.uid, isA<String>());
+              expect(user.uid, equals(kMockUid));
+              expect(auth.currentUser!.uid, equals(user.uid));
+            } else {
+              fail('Should not have been called');
+            }
+          }, count: 2, reason: 'Stream should only have been called 2 times'),
+        );
 
         await injectEventChannelResponse('idTokenChannel', {'user': null});
         await injectEventChannelResponse('idTokenChannel', {'user': user});
 
-        await expectLater(
-          stream,
-          emits(isA<UserPlatform>().having((e) => e.uid, 'uid', kMockUid)),
-        );
-
-        expect(auth.currentUser!.uid, equals(kMockUid));
-        expect(log, isEmpty);
+        expect(log, equals([]));
       });
     });
 
@@ -1057,36 +1048,31 @@ void main() {
       });
 
       test('listens to incoming changes', () async {
-        Stream<UserPlatform?> stream = auth.userChanges().asBroadcastStream();
-
-        await expectLater(stream, emits(isNull));
-        expect(auth.currentUser, equals(isNull));
-
-        await injectEventChannelResponse('idTokenChannel', {'user': user});
-
-        await expectLater(
-          stream,
-          emits(isA<UserPlatform>().having((e) => e.uid, 'uid', kMockUid)),
-        );
-        expect(auth.currentUser!.uid, equals(kMockUid));
-
-        expect(log, isEmpty);
-      });
-
-      test('emits the latest user available', () async {
         Stream<UserPlatform?> stream = auth.userChanges();
+        int call = 0;
+
+        subscription = stream.listen(
+          expectAsync1((UserPlatform? user) {
+            call++;
+            if (call == 1) {
+              expect(user, isNull);
+              expect(auth.currentUser, equals(isNull));
+            } else if (call == 2) {
+              expect(user!.uid, isA<String>());
+              expect(user.uid, equals(kMockUid));
+              expect(auth.currentUser!.uid, equals(user.uid));
+            } else {
+              fail('Should not have been called');
+            }
+          }, count: 2, reason: 'Stream should only have been called 2 times'),
+        );
+
         // id token change events will trigger setCurrentUser()
         // and hence userChange events
         await injectEventChannelResponse('idTokenChannel', {'user': null});
         await injectEventChannelResponse('idTokenChannel', {'user': user});
 
-        await expectLater(
-          stream,
-          emits(isA<UserPlatform>().having((e) => e.uid, 'uid', kMockUid)),
-        );
-
-        expect(auth.currentUser!.uid, equals(kMockUid));
-        expect(log, isEmpty);
+        expect(log, equals([]));
       });
     });
   });

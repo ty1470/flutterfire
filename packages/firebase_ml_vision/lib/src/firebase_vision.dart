@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// @dart=2.9
+
 part of firebase_ml_vision;
 
 enum _ImageType { file, bytes }
@@ -20,7 +22,7 @@ class RecognizedLanguage {
 
   /// The BCP-47 language code, such as, en-US or sr-Latn. For more information,
   /// see http://www.unicode.org/reports/tr35/#Unicode_locale_identifier.
-  final String? languageCode;
+  final String languageCode;
 }
 
 /// The Firebase machine learning vision API.
@@ -51,7 +53,7 @@ class FirebaseVision {
   static final FirebaseVision instance = FirebaseVision._();
 
   /// Creates an instance of [BarcodeDetector].
-  BarcodeDetector barcodeDetector([BarcodeDetectorOptions? options]) {
+  BarcodeDetector barcodeDetector([BarcodeDetectorOptions options]) {
     return BarcodeDetector._(
       options ?? const BarcodeDetectorOptions(),
       nextHandle++,
@@ -59,7 +61,7 @@ class FirebaseVision {
   }
 
   /// Creates an instance of [FaceDetector].
-  FaceDetector faceDetector([FaceDetectorOptions? options]) {
+  FaceDetector faceDetector([FaceDetectorOptions options]) {
     return FaceDetector._(
       options ?? const FaceDetectorOptions(),
       nextHandle++,
@@ -67,7 +69,7 @@ class FirebaseVision {
   }
 
   /// Creates an on device instance of [ImageLabeler].
-  ImageLabeler imageLabeler([ImageLabelerOptions? options]) {
+  ImageLabeler imageLabeler([ImageLabelerOptions options]) {
     return ImageLabeler._(
       options: options ?? const ImageLabelerOptions(),
       modelType: ModelType.onDevice,
@@ -84,7 +86,7 @@ class FirebaseVision {
   }
 
   /// Creates a cloud instance of [ImageLabeler].
-  ImageLabeler cloudImageLabeler([CloudImageLabelerOptions? options]) {
+  ImageLabeler cloudImageLabeler([CloudImageLabelerOptions options]) {
     return ImageLabeler._(
       options: options ?? const CloudImageLabelerOptions(),
       modelType: ModelType.cloud,
@@ -94,7 +96,7 @@ class FirebaseVision {
 
   /// Creates a cloud instance of [TextRecognizer].
   TextRecognizer cloudTextRecognizer(
-      [CloudTextRecognizerOptions? cloudOptions]) {
+      [CloudTextRecognizerOptions cloudOptions]) {
     return TextRecognizer._(
       cloudOptions: cloudOptions ?? const CloudTextRecognizerOptions(),
       modelType: ModelType.cloud,
@@ -104,7 +106,7 @@ class FirebaseVision {
 
   /// Creates a cloud instance of [DocumentTextRecognizer].
   DocumentTextRecognizer cloudDocumentTextRecognizer(
-      [CloudDocumentRecognizerOptions? cloudOptions]) {
+      [CloudDocumentRecognizerOptions cloudOptions]) {
     return DocumentTextRecognizer._(
       cloudOptions: cloudOptions ?? const CloudDocumentRecognizerOptions(),
       handle: nextHandle++,
@@ -117,10 +119,10 @@ class FirebaseVision {
 /// Create an instance by calling one of the factory constructors.
 class FirebaseVisionImage {
   FirebaseVisionImage._({
-    required _ImageType type,
-    FirebaseVisionImageMetadata? metadata,
-    File? imageFile,
-    Uint8List? bytes,
+    @required _ImageType type,
+    FirebaseVisionImageMetadata metadata,
+    File imageFile,
+    Uint8List bytes,
   })  : _imageFile = imageFile,
         _metadata = metadata,
         _bytes = bytes,
@@ -128,6 +130,7 @@ class FirebaseVisionImage {
 
   /// Construct a [FirebaseVisionImage] from a file.
   factory FirebaseVisionImage.fromFile(File imageFile) {
+    assert(imageFile != null);
     return FirebaseVisionImage._(
       type: _ImageType.file,
       imageFile: imageFile,
@@ -136,6 +139,7 @@ class FirebaseVisionImage {
 
   /// Construct a [FirebaseVisionImage] from a file path.
   factory FirebaseVisionImage.fromFilePath(String imagePath) {
+    assert(imagePath != null);
     return FirebaseVisionImage._(
       type: _ImageType.file,
       imageFile: File(imagePath),
@@ -154,6 +158,8 @@ class FirebaseVisionImage {
     Uint8List bytes,
     FirebaseVisionImageMetadata metadata,
   ) {
+    assert(bytes != null);
+    assert(metadata != null);
     return FirebaseVisionImage._(
       type: _ImageType.bytes,
       bytes: bytes,
@@ -161,39 +167,44 @@ class FirebaseVisionImage {
     );
   }
 
-  final Uint8List? _bytes;
-  final File? _imageFile;
-  final FirebaseVisionImageMetadata? _metadata;
+  final Uint8List _bytes;
+  final File _imageFile;
+  final FirebaseVisionImageMetadata _metadata;
   final _ImageType _type;
 
   Map<String, dynamic> _serialize() => <String, dynamic>{
         'type': _enumToString(_type),
         'bytes': _bytes,
         'path': _imageFile?.path,
-        'metadata': _type == _ImageType.bytes ? _metadata!._serialize() : null,
+        'metadata': _type == _ImageType.bytes ? _metadata._serialize() : null,
       };
 }
 
 /// Plane attributes to create the image buffer on iOS.
 ///
-/// When using iOS, [height], and [width] throw [AssertionError]
+/// When using iOS, [bytesPerRow], [height], and [width] throw [AssertionError]
 /// if `null`.
 class FirebaseVisionImagePlaneMetadata {
   FirebaseVisionImagePlaneMetadata({
-    required this.bytesPerRow,
-    this.height,
-    this.width,
-  })  : assert(defaultTargetPlatform != TargetPlatform.iOS || height != null),
-        assert(defaultTargetPlatform != TargetPlatform.iOS || width != null);
+    @required this.bytesPerRow,
+    @required this.height,
+    @required this.width,
+  })  : assert(
+          defaultTargetPlatform != TargetPlatform.iOS || bytesPerRow != null,
+        ),
+        assert(defaultTargetPlatform != TargetPlatform.iOS || height != null),
+        assert(
+          defaultTargetPlatform != TargetPlatform.iOS || width != null,
+        );
 
   /// The row stride for this color plane, in bytes.
   final int bytesPerRow;
 
   /// Height of the pixel buffer on iOS.
-  final int? height;
+  final int height;
 
   /// Width of the pixel buffer on iOS.
-  final int? width;
+  final int width;
 
   Map<String, dynamic> _serialize() => <String, dynamic>{
         'bytesPerRow': bytesPerRow,
@@ -207,18 +218,23 @@ class FirebaseVisionImagePlaneMetadata {
 /// [rotation] defaults to [ImageRotation.rotation0]. Currently only rotates on
 /// Android.
 ///
-/// When using iOS, [rawFormat] and [planeData] throw [AssertionError] if `null`.
+/// When using iOS, [rawFormat] and [planeData] throw [AssertionError] if
+/// `null`.
 class FirebaseVisionImageMetadata {
   FirebaseVisionImageMetadata({
-    required this.size,
-    this.rawFormat,
-    this.planeData,
+    @required this.size,
+    @required this.rawFormat,
+    @required this.planeData,
     this.rotation = ImageRotation.rotation0,
-  })  : assert(
+  })  : assert(size != null),
+        assert(
           defaultTargetPlatform != TargetPlatform.iOS || rawFormat != null,
         ),
         assert(
           defaultTargetPlatform != TargetPlatform.iOS || planeData != null,
+        ),
+        assert(
+          defaultTargetPlatform != TargetPlatform.iOS || planeData.isNotEmpty,
         );
 
   /// Size of the image in pixels.
@@ -238,12 +254,12 @@ class FirebaseVisionImageMetadata {
   /// See https://developer.apple.com/documentation/corevideo/1563591-pixel_format_identifiers?language=objc
   ///
   /// Not used on Android.
-  final Object? rawFormat;
+  final dynamic rawFormat;
 
   /// The plane attributes to create the image buffer on iOS.
   ///
   /// Not used on Android.
-  final List<FirebaseVisionImagePlaneMetadata>? planeData;
+  final List<FirebaseVisionImagePlaneMetadata> planeData;
 
   int _imageRotationToInt(ImageRotation rotation) {
     switch (rotation) {
@@ -265,8 +281,7 @@ class FirebaseVisionImageMetadata {
         'rotation': _imageRotationToInt(rotation),
         'rawFormat': rawFormat,
         'planeData': planeData
-            ?.map(
-                (FirebaseVisionImagePlaneMetadata plane) => plane._serialize())
+            .map((FirebaseVisionImagePlaneMetadata plane) => plane._serialize())
             .toList(),
       };
 }

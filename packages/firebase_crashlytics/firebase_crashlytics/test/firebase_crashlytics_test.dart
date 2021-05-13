@@ -9,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_crashlytics/src/utils.dart';
+import 'package:stack_trace/stack_trace.dart';
 import './mock.dart';
 
 void main() {
@@ -75,7 +76,8 @@ void main() {
             'exception': exception,
             'reason': exceptionReason,
             'information': '',
-            'stackTraceElements': getStackTraceElements(stack)
+            'stackTraceElements': getStackTraceElements(
+                Trace.format(stack).trimRight().split('\n'))
           })
         ]);
         // Confirm that the stack trace contains current stack.
@@ -128,7 +130,8 @@ void main() {
           'exception': exception,
           'reason': exceptionReason,
           'information': '$exceptionFirstMessage\n$exceptionSecondMessage',
-          'stackTraceElements': getStackTraceElements(stack)
+          'stackTraceElements':
+              getStackTraceElements(Trace.format(stack).trimRight().split('\n'))
         })
       ]);
     });
@@ -207,12 +210,11 @@ void main() {
     });
 
     group('getStackTraceElements', () {
-      test('with symbolic stack trace', () async {
+      test('with character index', () async {
         final List<String> lines = <String>[
-          '#0      StatefulElement.build (package:flutter/src/widgets/framework.dart:3825:27)'
+          'package:flutter/src/widgets/framework.dart 3825:27  StatefulElement.build'
         ];
-        final StackTrace trace = StackTrace.fromString(lines.join('\n'));
-        final List<Map<String, String>> elements = getStackTraceElements(trace);
+        final List<Map<String, String>> elements = getStackTraceElements(lines);
         expect(elements.length, 1);
         expect(elements.first, <String, String>{
           'class': 'StatefulElement',
@@ -222,58 +224,30 @@ void main() {
         });
       });
 
-      test('with symbolic stack trace and without class', () async {
+      test('without character index', () async {
         final List<String> lines = <String>[
-          '#0      main (package:firebase_crashlytics/test/main.dart:12)'
+          'package:flutter/src/widgets/framework.dart 3825  StatefulElement.build'
         ];
-        final StackTrace trace = StackTrace.fromString(lines.join('\n'));
-        final List<Map<String, String>> elements = getStackTraceElements(trace);
+        final List<Map<String, String>> elements = getStackTraceElements(lines);
+        expect(elements.length, 1);
+        expect(elements.first, <String, String>{
+          'class': 'StatefulElement',
+          'method': 'build',
+          'file': 'package:flutter/src/widgets/framework.dart',
+          'line': '3825',
+        });
+      });
+
+      test('without class', () async {
+        final List<String> lines = <String>[
+          'package:firebase_crashlytics/test/main.dart 12  main'
+        ];
+        final List<Map<String, String>> elements = getStackTraceElements(lines);
         expect(elements.length, 1);
         expect(elements.first, <String, String>{
           'method': 'main',
           'file': 'package:firebase_crashlytics/test/main.dart',
           'line': '12',
-        });
-      });
-
-      test('with android obfuscated stack trace', () async {
-        final List<String> lines = <String>[
-          'Warning: This VM has been configured to produce stack traces that violate the Dart standard.',
-          '*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***',
-          'pid: 1357, tid: 1415, name 1.ui',
-          "build_id: '77d1b910140a2d66b93594aea59469cf'",
-          'isolate_dso_base: 75f178181000, vm_dso_base: 75f178181000',
-          'isolate_instructions: 75f17818f000, vm_instructions: 75f178183000',
-          '    #00 abs 000075f17833027b virt 00000000001af27b _kDartIsolateSnapshotInstructions+0x1a127b',
-        ];
-        final StackTrace trace = StackTrace.fromString(lines.join('\n'));
-        final List<Map<String, String>> elements = getStackTraceElements(trace);
-        expect(elements.length, 1);
-        expect(elements.first, <String, String>{
-          'method':
-              '    #00 abs 0 virt 00000000001af27b _kDartIsolateSnapshotInstructions+0x1a127b',
-          'file': '',
-          'line': '0',
-        });
-      });
-
-      test('with ios obfuscated stack trace', () async {
-        final List<String> lines = <String>[
-          'Warning: This VM has been configured to produce stack traces that violate the Dart standard.',
-          '*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***',
-          'pid: 1357, tid: 1415, name 1.ui',
-          "build_id: '77d1b910140a2d66b93594aea59469cf'",
-          'isolate_dso_base: 75f178181000, vm_dso_base: 75f178181000',
-          'isolate_instructions: 75f17818f000, vm_instructions: 75f178183000',
-          '    #00 abs 000075f17833027b _kDartIsolateSnapshotInstructions+0x1a127b',
-        ];
-        final StackTrace trace = StackTrace.fromString(lines.join('\n'));
-        final List<Map<String, String>> elements = getStackTraceElements(trace);
-        expect(elements.length, 1);
-        expect(elements.first, <String, String>{
-          'method': '    #00 abs 0 _kDartIsolateSnapshotInstructions+0x1a127b',
-          'file': '',
-          'line': '0',
         });
       });
     });
